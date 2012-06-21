@@ -20,13 +20,22 @@
 #include "MaterialManager.h"
 
 #include "lib/ogl.h"
+#include "maths/MathUtil.h"
 #include "maths/Vector4D.h"
+#include "ps/ConfigDB.h"
 #include "ps/Filesystem.h"
 #include "ps/PreprocessorWrapper.h"
 #include "ps/XML/Xeromyces.h"
 #include "renderer/Renderer.h"
 
 #include <sstream>
+
+CMaterialManager::CMaterialManager()
+{
+	qualityLevel = 5.0;
+	CFG_GET_SYS_VAL("materialmgr.quality", Float, qualityLevel);
+	qualityLevel = clamp(qualityLevel, 0.0f, 10.0f);
+}
 
 CMaterial CMaterialManager::LoadMaterial(const VfsPath& pathname)
 {
@@ -50,6 +59,7 @@ CMaterial CMaterialManager::LoadMaterial(const VfsPath& pathname)
 	EL(uniform);
 	AT(effect);
 	AT(if);
+	AT(quality);
 	AT(material);
 	AT(name);
 	AT(value);
@@ -62,6 +72,9 @@ CMaterial CMaterialManager::LoadMaterial(const VfsPath& pathname)
 	
 	CPreprocessorWrapper preprocessor;
 	preprocessor.AddDefine("CFG_FORCE_ALPHATEST", g_Renderer.m_Options.m_ForceAlphaTest ? "1" : "0");
+	
+	CVector4D vec(qualityLevel,0,0,0);
+	material.AddStaticUniform("qualityLevel", vec);
 
 	XERO_ITER_EL(root, node)
 	{
@@ -69,11 +82,21 @@ CMaterial CMaterialManager::LoadMaterial(const VfsPath& pathname)
 		XMBAttributeList attrs = node.GetAttributes();
 		if (token == el_alternative)
 		{
-			if (preprocessor.TestConditional(attrs.GetNamedItem(at_if)))
+			CStr cond = attrs.GetNamedItem(at_if);
+			if (!(!cond.empty() && preprocessor.TestConditional(cond)))
 			{
-				material = LoadMaterial(VfsPath("art/materials") / attrs.GetNamedItem(at_material).FromUTF8());
-				break;
+				cond = attrs.GetNamedItem(at_quality);
+				if (cond.empty())
+					continue;
+				else
+				{	
+					if (cond.ToFloat() <= qualityLevel)
+						continue;
+				}
 			}
+				
+			material = LoadMaterial(VfsPath("art/materials") / attrs.GetNamedItem(at_material).FromUTF8());
+			break;
 		}
 		else if (token == el_alpha_blending)
 		{

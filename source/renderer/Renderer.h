@@ -129,6 +129,7 @@ public:
 		bool m_ForceAlphaTest;
 		bool m_GPUSkinning;
 		bool m_Silhouettes;
+		bool m_GenTangents;
 	} m_Options;
 
 	struct Caps {

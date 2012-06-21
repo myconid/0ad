@@ -32,6 +32,7 @@
 #include "graphics/ShaderManager.h"
 #include "graphics/TextureManager.h"
 
+#include "renderer/MikktspaceWrap.h"
 #include "renderer/ModelRenderer.h"
 #include "renderer/ModelVertexRenderer.h"
 #include "renderer/Renderer.h"
@@ -143,6 +144,14 @@ void ModelRenderer::BuildColor4ub(
 		tempcolor.Z *= shadingColor.b;
 		Color[j] = ConvertRGBColorTo4ub(tempcolor);
 	}
+}
+
+
+void ModelRenderer::GenTangents(const CModelDefPtr& mdef, std::vector<float>& newVertices)
+{
+	MikkTSpace ms(mdef, newVertices);
+
+	ms.generate();
 }
 
 
