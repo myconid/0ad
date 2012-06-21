@@ -660,6 +660,19 @@ void ShaderModelRenderer::Render(const RenderModifierPtr& modifier, const CShade
 							currentStaticUniforms = newStaticUniforms;
 							currentStaticUniforms.BindUniforms(shader);
 						}
+						
+						CShaderRenderQueries renderQueries = model->GetMaterial().GetRenderQueries();
+						
+						for (size_t q = 0; q < renderQueries.GetSize(); q++)
+						{
+							CStrIntern str = renderQueries.GetItem(q);
+							if (str == g_Renderer.GetShaderManager().QueryTime)
+							{
+								double time = g_Renderer.GetTimeManager().GetGlobalTime();
+								renderQueries.Set(str, CVector4D(time,0,0,0));
+							}
+						}
+						renderQueries.BindUniforms(shader);
 
 						modifier->PrepareModel(shader, model);
 

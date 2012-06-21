@@ -57,6 +57,7 @@ CMaterial CMaterialManager::LoadMaterial(const VfsPath& pathname)
 	EL(define);
 	EL(shader);
 	EL(uniform);
+	EL(renderquery);
 	AT(effect);
 	AT(if);
 	AT(quality);
@@ -116,6 +117,10 @@ CMaterial CMaterialManager::LoadMaterial(const VfsPath& pathname)
 			CVector4D vec;
 			str >> vec.X >> vec.Y >> vec.Z >> vec.W;
 			material.AddStaticUniform(attrs.GetNamedItem(at_name).c_str(), vec);
+		}
+		else if (token == el_renderquery)
+		{
+			material.AddRenderQuery(attrs.GetNamedItem(at_name).c_str());
 		}
 	}
 

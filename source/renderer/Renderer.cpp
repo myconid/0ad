@@ -64,6 +64,7 @@
 #include "renderer/SkyManager.h"
 #include "renderer/TerrainOverlay.h"
 #include "renderer/TerrainRenderer.h"
+#include "renderer/TimeManager.h"
 #include "renderer/VertexBufferManager.h"
 #include "renderer/WaterManager.h"
 
@@ -268,6 +269,9 @@ public:
 
 	/// Material manager
 	CMaterialManager materialManager;
+	
+	/// Time manager
+	CTimeManager timeManager;
 
 	/// Shadow map
 	ShadowMap shadow;
@@ -1975,6 +1979,11 @@ CParticleManager& CRenderer::GetParticleManager()
 TerrainRenderer& CRenderer::GetTerrainRenderer()
 {
 	return m->terrainRenderer;
+}
+
+CTimeManager& CRenderer::GetTimeManager()
+{
+	return m->timeManager;
 }
 
 CMaterialManager& CRenderer::GetMaterialManager()

@@ -234,6 +234,32 @@ void CShaderUniforms::BindUniforms(const CShaderProgramPtr& shader) const
 	}
 }
 
+
+CShaderRenderQueries::CShaderRenderQueries()
+{
+	//QueryTime = CStrIntern("time");
+	//QueryModelPos = CStrIntern("modelposition");
+}
+
+
+//RenderQueryTypes CShaderRenderQueries::QueryTypes;
+
+void CShaderRenderQueries::Add(const char* name)
+{
+	CShaderUniforms::Add(name, CVector4D(0,0,0,0));
+}
+
+size_t CShaderRenderQueries::GetSize()
+{
+	return m_Items->items.size();
+}
+
+CStrIntern CShaderRenderQueries::GetItem(size_t i)
+{
+	return m_Items->items[i].first;
+}
+
+
 // Explicit instantiations:
 
 template<> CShaderParams<CStrIntern>::InternedItems_t CShaderParams<CStrIntern>::s_InternedItems = CShaderParams<CStrIntern>::InternedItems_t();

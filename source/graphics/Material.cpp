@@ -48,3 +48,8 @@ void CMaterial::AddSampler(const TextureSampler& texture)
 	if (texture.Name == CStrIntern("baseTex"))
 		m_DiffuseTexture = texture.Sampler;
 }
+
+void CMaterial::AddRenderQuery(const char* key)
+{
+	m_RenderQueries.Add(key);
+}

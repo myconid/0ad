@@ -60,6 +60,9 @@ public:
 
 	void AddSampler(const TextureSampler& texture);
 	const SamplersVector& GetSamplers() const { return m_Samplers; }
+	
+	void AddRenderQuery(const char* key);
+	const CShaderRenderQueries& GetRenderQueries() const { return m_RenderQueries; }
 
 private:
 	
@@ -72,6 +75,7 @@ private:
 	CStrIntern m_ShaderEffect;
 	CShaderDefines m_ShaderDefines;
 	CShaderUniforms m_StaticUniforms;
+	CShaderRenderQueries m_RenderQueries;
 
 	bool m_AlphaBlending;
 

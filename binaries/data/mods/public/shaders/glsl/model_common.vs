@@ -13,6 +13,11 @@ uniform vec2 losTransform;
 uniform mat4 shadowTransform;
 uniform mat4 instancingTransform;
 
+#if USE_WIND
+  uniform vec4 time;
+  uniform vec4 windData;
+#endif
+
 #if USE_SHADOW_SAMPLER && USE_SHADOW_PCF
   uniform vec4 shadowScale;
 #endif
@@ -57,6 +62,12 @@ attribute vec2 a_uv1;
   attribute vec4 a_skinWeights;
 #endif
 
+vec4 fakeCos(vec4 x)
+{
+	vec4 tri = abs(fract(x + 0.5) * 2.0 - 1.0);
+	return tri * tri *(3.0 - 2.0 * tri);  
+}
+
 
 void main()
 {
@@ -84,6 +95,40 @@ void main()
     vec4 position = vec4(a_vertex, 1.0);
     vec3 normal = a_normal;
   #endif
+  #endif
+
+  #if USE_WIND
+
+    vec2 wind = windData.xy;
+
+    // fractional part of model position, clamped to >.4
+    vec4 modelPos = instancingTransform[3];
+    modelPos = fract(modelPos);
+    modelPos = clamp(modelPos, 0.4, 1);
+
+    // crude measure of wind intensity
+    float abswind = abs(wind.x) + abs(wind.y);
+
+    vec4 cosVec;
+    // these determine the speed of the wind's "cosine" waves.
+    cosVec.x = time.x * modelPos[0] + position.x;
+    cosVec.y = time.x * modelPos[2] / 3 + instancingTransform[3][0];
+    cosVec.z = time.x * abswind / 4 + position.z;
+
+    // calculate "cosines" in parallel, using a smoothed triangle wave
+    cosVec = fakeCos(cosVec);
+
+    float limit = clamp((a_vertex.x * a_vertex.z * a_vertex.y) / 3000, 0, 0.2);
+
+    float diff = cosVec.x * limit; 
+    float diff2 = cosVec.y * clamp(a_vertex.y / 60, 0, 0.25);
+
+    // fluttering of model parts based on distance from model center (ie longer branches)
+    position.xyz += cosVec.z * limit * clamp(abswind, 1.2, 1.7);
+
+    // swaying of trunk based on distance from ground (higher parts sway more)
+    position.xz += diff + diff2 * wind;
+    
   #endif
 
   gl_Position = transform * position;

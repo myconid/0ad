@@ -167,4 +167,25 @@ public:
 	void BindUniforms(const CShaderProgramPtr& shader) const;
 };
 
+/**
+ * Uniform values that need to be evaluated in the renderer.
+ * 
+ * Not thread-safe - must only be used from the main thread.
+ */
+class CShaderRenderQueries : public CShaderUniforms
+{
+public:
+	CShaderRenderQueries();
+	
+	/**
+	 * Add a name and associated value to the map of uniforms.
+	 * If the name is already defined, its value will be replaced.
+	 */
+	void Add(const char* name);
+	
+	size_t GetSize();
+	
+	CStrIntern GetItem(size_t i);
+};
+
 #endif // INCLUDED_SHADERDEFINES
