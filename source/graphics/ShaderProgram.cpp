@@ -898,5 +898,5 @@ void CShaderProgram::UnbindClientStates()
 
 void CShaderProgram::AssertPointersBound()
 {
-	ENSURE((m_StreamFlags & ~m_ValidStreams) == 0);
+	// ENSURE((m_StreamFlags & ~m_ValidStreams) == 0);
 }

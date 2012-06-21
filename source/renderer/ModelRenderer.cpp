@@ -148,15 +148,16 @@ void ModelRenderer::BuildColor4ub(
 // Copy UV coordinates
 void ModelRenderer::BuildUV(
 		const CModelDefPtr& mdef,
-		const VertexArrayIterator<float[2]>& UV)
+		const VertexArrayIterator<float[2]>& UV,
+		int UVset)
 {
 	size_t numVertices = mdef->GetNumVertices();
 	SModelVertex* vertices = mdef->GetVertices();
 
 	for (size_t j=0; j < numVertices; ++j)
 	{
-		UV[j][0] = vertices[j].m_U;
-		UV[j][1] = 1.0-vertices[j].m_V;
+		UV[j][0] = vertices[j].m_UVs[UVset * 2];
+		UV[j][1] = 1.0-vertices[j].m_UVs[UVset * 2 + 1];
 	}
 }
 
