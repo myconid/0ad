@@ -23,6 +23,11 @@
 #include "lib/ogl.h"
 #include "lib/res/graphics/ogl_tex.h"
 
+#include "ps/CLogger.h"
+#include "ps/Filesystem.h"
+#include "ps/XML/Xeromyces.h"
+
+#include "graphics/MaterialManager.h"
 #include "graphics/Terrain.h"
 #include "graphics/TerrainTextureManager.h"
 #include "graphics/TerrainProperties.h"
@@ -31,23 +36,105 @@
 
 #include <map>
 
-CTerrainTextureEntry::CTerrainTextureEntry(CTerrainPropertiesPtr props, const VfsPath& path):
-	m_pProperties(props),
+CTerrainTextureEntry::CTerrainTextureEntry(CTerrainPropertiesPtr properties, const VfsPath& path):
+	m_pProperties(properties),
 	m_BaseColor(0),
 	m_BaseColorValid(false)
 {
-	ENSURE(props);
+	ENSURE(properties);
+	
+	CXeromyces XeroFile;
+	if (XeroFile.Load(g_VFS, path) != PSRETURN_OK)
+	{
+		LOGERROR(L"Terrain xml not found (%hs)", path.string().c_str());
+		return;
+	}
 
-	CTextureProperties texture(path);
-	texture.SetWrap(GL_REPEAT);
+	#define EL(x) int el_##x = XeroFile.GetElementID(#x)
+	#define AT(x) int at_##x = XeroFile.GetAttributeID(#x)
+	EL(tag);
+	EL(terrain);
+	EL(texture);
+	EL(textures);
+	EL(material);
+	EL(props);
+	AT(file);
+	AT(name);
+	#undef AT
+	#undef EL
+	
+	
+	XMBElement root = XeroFile.GetRoot();
 
-	// TODO: anisotropy should probably be user-configurable, but we want it to be
-	// at least 2 for terrain else the ground looks very blurry when you tilt the
-	// camera upwards
-	texture.SetMaxAnisotropy(2.0f);
+	if (root.GetNodeName() != el_terrain)
+	{
+		LOGERROR(L"Invalid terrain format (unrecognised root element '%hs')", XeroFile.GetElementString(root.GetNodeName()).c_str());
+		return;
+	}
+	
+	
+	std::vector<std::pair<CStr, VfsPath> > samplers;
+	
+	m_Tag = utf8_from_wstring(path.Basename().string());
+	
+	
+	XERO_ITER_EL(root, child)
+	{
+		int child_name = child.GetNodeName();
 
-	if (CRenderer::IsInitialised())
-		m_Texture = g_Renderer.GetTextureManager().CreateTexture(texture);
+		if (child_name == el_textures)
+		{
+			XERO_ITER_EL(child, textures_element)
+			{
+				ENSURE(textures_element.GetNodeName() == el_texture);
+				
+				CStr name;
+				VfsPath path;
+				XERO_ITER_ATTR(textures_element, se)
+				{
+					if (se.Name == at_file)
+						path = VfsPath("art/textures/terrain/types") / se.Value.FromUTF8();
+					else if (se.Name == at_name)
+						name = se.Value;
+				}
+				samplers.push_back(make_pair(name, path));
+			}
+		
+		}
+		else if (child_name == el_material)
+		{
+			VfsPath mat = VfsPath("art/materials") / child.GetText().FromUTF8();
+			m_Material = g_Renderer.GetMaterialManager().LoadMaterial(mat);
+		}
+		else if (child_name == el_props)
+		{
+			CTerrainPropertiesPtr ret (new CTerrainProperties(properties));
+			ret->LoadXml(child, &XeroFile, path);
+			if (ret) m_pProperties = ret;
+		}
+		else if (child_name == el_tag)
+		{
+			m_Tag = child.GetText();
+		}
+	}
+	
+	
+	for (size_t i = 0; i < samplers.size(); ++i)
+	{
+		CTextureProperties texture(samplers[i].second);
+		texture.SetWrap(GL_REPEAT);
+
+		// TODO: anisotropy should probably be user-configurable, but we want it to be
+		// at least 2 for terrain else the ground looks very blurry when you tilt the
+		// camera upwards
+		texture.SetMaxAnisotropy(2.0f);
+
+		if (CRenderer::IsInitialised())
+		{
+			CTexturePtr texptr = g_Renderer.GetTextureManager().CreateTexture(texture);
+			m_Material.AddSampler(CMaterial::TextureSampler(samplers[i].first, texptr));
+		}
+	}
 
 	float texAngle = 0.f;
 	float texSize = 1.f;
@@ -69,8 +156,6 @@ CTerrainTextureEntry::CTerrainTextureEntry(CTerrainPropertiesPtr props, const Vf
 	GroupVector::iterator it=m_Groups.begin();
 	for (;it!=m_Groups.end();++it)
 		(*it)->AddTerrain(this);
-	
-	m_Tag = utf8_from_wstring(path.Basename().string());
 }
 
 CTerrainTextureEntry::~CTerrainTextureEntry()
@@ -92,9 +177,9 @@ void CTerrainTextureEntry::BuildBaseColor()
 	}
 
 	// Use the texture colour if available
-	if (m_Texture->TryLoad())
+	if (GetTexture()->TryLoad())
 	{
-		m_BaseColor = m_Texture->GetBaseColour();
+		m_BaseColor = GetTexture()->GetBaseColour();
 		m_BaseColorValid = true;
 	}
 }
