@@ -1,1 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?> <terrain> <textures> <texture name="baseTex" file="alpine_cliff.dds"/> </textures> <material>terrain_norm.xml</material> </terrain>
+<?xml version="1.0" encoding="utf-8"?>
+<terrain>
+        <textures>
+                <texture name="baseTex" file="alpine_cliff.dds"/>
+		<texture name="normTex" file="alpine_cliff_norm.png"/>
+        </textures>
+        <material>terrain_norm.xml</material>
+</terrain>

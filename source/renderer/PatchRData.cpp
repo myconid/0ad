@@ -369,6 +369,7 @@ void CPatchRData::AddBlend(std::vector<SBlendVertex>& blendVertices, std::vector
 
 	terrain->CalcPosition(gx, gz, dst.m_Position);
 	terrain->CalcNormal(gx, gz, normal);
+	dst.m_Normal = normal;
 	dst.m_DiffuseColor = cpuLighting ? lightEnv.EvaluateTerrainDiffuseScaled(normal) : lightEnv.EvaluateTerrainDiffuseFactor(normal);
 	dst.m_AlphaUVs[0] = vtx[0].m_AlphaUVs[0];
 	dst.m_AlphaUVs[1] = vtx[0].m_AlphaUVs[1];
@@ -376,6 +377,7 @@ void CPatchRData::AddBlend(std::vector<SBlendVertex>& blendVertices, std::vector
 
 	terrain->CalcPosition(gx + 1, gz, dst.m_Position);
 	terrain->CalcNormal(gx + 1, gz, normal);
+	dst.m_Normal = normal;
 	dst.m_DiffuseColor = cpuLighting ? lightEnv.EvaluateTerrainDiffuseScaled(normal) : lightEnv.EvaluateTerrainDiffuseFactor(normal);
 	dst.m_AlphaUVs[0] = vtx[1].m_AlphaUVs[0];
 	dst.m_AlphaUVs[1] = vtx[1].m_AlphaUVs[1];
@@ -383,6 +385,7 @@ void CPatchRData::AddBlend(std::vector<SBlendVertex>& blendVertices, std::vector
 
 	terrain->CalcPosition(gx + 1, gz + 1, dst.m_Position);
 	terrain->CalcNormal(gx + 1, gz + 1, normal);
+	dst.m_Normal = normal;
 	dst.m_DiffuseColor = cpuLighting ? lightEnv.EvaluateTerrainDiffuseScaled(normal) : lightEnv.EvaluateTerrainDiffuseFactor(normal);
 	dst.m_AlphaUVs[0] = vtx[2].m_AlphaUVs[0];
 	dst.m_AlphaUVs[1] = vtx[2].m_AlphaUVs[1];
@@ -390,6 +393,7 @@ void CPatchRData::AddBlend(std::vector<SBlendVertex>& blendVertices, std::vector
 
 	terrain->CalcPosition(gx, gz + 1, dst.m_Position);
 	terrain->CalcNormal(gx, gz + 1, normal);
+	dst.m_Normal = normal;
 	dst.m_DiffuseColor = cpuLighting ? lightEnv.EvaluateTerrainDiffuseScaled(normal) : lightEnv.EvaluateTerrainDiffuseFactor(normal);
 	dst.m_AlphaUVs[0] = vtx[3].m_AlphaUVs[0];
 	dst.m_AlphaUVs[1] = vtx[3].m_AlphaUVs[1];
@@ -548,6 +552,8 @@ void CPatchRData::BuildVertices()
 			// for all vertices, it need not be stored in the vertex structure)
 			CVector3D normal;
 			terrain->CalcNormal(ix,iz,normal);
+			
+			vertices[v].m_Normal = normal;
 
 			vertices[v].m_DiffuseColor = cpuLighting ? lightEnv.EvaluateTerrainDiffuseScaled(normal) : lightEnv.EvaluateTerrainDiffuseFactor(normal);
 		}
@@ -777,16 +783,30 @@ void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CS
  	// Render each batch
  	for (TextureBatches::iterator itt = batches.begin(); itt != batches.end(); ++itt)
 	{
+					
 		CShaderTechniquePtr techBase = g_Renderer.GetShaderManager().LoadEffect(itt->first->GetMaterial().GetShaderEffect(), context, itt->first->GetMaterial().GetShaderDefines());
-	
+
 		techBase->BeginPass();
 		PrepareShader(techBase->GetShader(), shadow);
 		
 		const CShaderProgramPtr& shader = techBase->GetShader(0);
-		
+			
 		if (itt->first)
 		{			
-			shader->BindTexture("baseTex", itt->first->GetTexture());
+			//shader->BindTexture("baseTex", itt->first->GetTexture());
+			
+			CMaterial::SamplersVector samplers = itt->first->GetMaterial().GetSamplers();
+			size_t samplersNum = samplers.size();
+			
+			for (size_t s = 0; s < samplersNum; ++s)
+			{
+				CMaterial::TextureSampler &samp = samplers[s];
+				shader->BindTexture(samp.Name.c_str(), samp.Sampler);
+			}
+			
+			itt->first->GetMaterial().GetStaticUniforms().BindUniforms(shader);
+			
+			
 
 #if !CONFIG2_GLES
 			if (isDummyShader)
@@ -814,6 +834,7 @@ void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CS
 			SBaseVertex *base = (SBaseVertex *)itv->first->Bind();
 			shader->VertexPointer(3, GL_FLOAT, stride, &base->m_Position[0]);
 			shader->ColorPointer(4, GL_UNSIGNED_BYTE, stride, &base->m_DiffuseColor);
+			shader->NormalPointer(GL_FLOAT, stride, &base->m_Normal[0]);
 			shader->TexCoordPointer(GL_TEXTURE0, 3, GL_FLOAT, stride, &base->m_Position[0]);
 
 			shader->AssertPointersBound();
@@ -975,18 +996,30 @@ void CPatchRData::RenderBlends(const std::vector<CPatchRData*>& patches, const C
  	CVertexBuffer* lastVB = NULL;
 
  	for (BatchesStack::iterator itt = batches.begin(); itt != batches.end(); ++itt)
-	{
+	{		
+		
 		CShaderTechniquePtr techBase = g_Renderer.GetShaderManager().LoadEffect(itt->m_Texture->GetMaterial().GetShaderEffect(), contextBlend, itt->m_Texture->GetMaterial().GetShaderDefines());
 	
 		techBase->BeginPass();
 		PrepareShader(techBase->GetShader(), shadow);
-		
+			
 		const CShaderProgramPtr& shader = techBase->GetShader(0);
-		
+			
 		if (itt->m_Texture)
 		{
-			shader->BindTexture("baseTex", itt->m_Texture->GetTexture());
+			//shader->BindTexture("baseTex", itt->m_Texture->GetTexture());
+			
+			CMaterial::SamplersVector samplers = itt->m_Texture->GetMaterial().GetSamplers();
+			size_t samplersNum = samplers.size();
+			
+			for (size_t s = 0; s < samplersNum; ++s)
+			{
+				CMaterial::TextureSampler &samp = samplers[s];
+				shader->BindTexture(samp.Name.c_str(), samp.Sampler);
+			}
 
+			itt->m_Texture->GetMaterial().GetStaticUniforms().BindUniforms(shader);
+			
 #if !CONFIG2_GLES
 			if (isDummyShader)
 			{
@@ -1019,6 +1052,7 @@ void CPatchRData::RenderBlends(const std::vector<CPatchRData*>& patches, const C
 
 				shader->VertexPointer(3, GL_FLOAT, stride, &base->m_Position[0]);
 				shader->ColorPointer(4, GL_UNSIGNED_BYTE, stride, &base->m_DiffuseColor);
+				shader->NormalPointer(GL_FLOAT, stride, &base->m_Normal[0]);
 				shader->TexCoordPointer(GL_TEXTURE0, 3, GL_FLOAT, stride, &base->m_Position[0]);
 				shader->TexCoordPointer(GL_TEXTURE1, 2, GL_FLOAT, stride, &base->m_AlphaUVs[0]);
 			}
