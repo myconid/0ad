@@ -200,7 +200,10 @@ void main()
 
   gl_FragColor.rgb = color;
 
-  #if USE_NORMAL_MAP
+  #if USE_SPECULAR_MAP
+	//gl_FragColor.rgb =  v_half;
+   //gl_FragColor.rgb = specular.rgb;
+	//gl_FragColor.r = 1.0;
     //gl_FragColor.rgb = abs(v_normal);
     //gl_FragColor.rgb = abs(v_tangent.xyz);
     //gl_FragColor.rgb = abs(v_bitangent.xyz);
