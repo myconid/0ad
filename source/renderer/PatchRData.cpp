@@ -23,7 +23,9 @@
 
 #include "graphics/GameView.h"
 #include "graphics/LightEnv.h"
+#include "graphics/LOSTexture.h"
 #include "graphics/Patch.h"
+#include "graphics/ShaderManager.h"
 #include "graphics/Terrain.h"
 #include "graphics/TextRenderer.h"
 #include "lib/alignment.h"
@@ -664,6 +666,36 @@ void CPatchRData::Update()
 	}
 }
 
+void CPatchRData::PrepareShader(const CShaderProgramPtr& shader, ShadowMap* shadow)
+{
+	shader->Uniform("transform", g_Renderer.GetViewCamera().GetViewProjection());
+	shader->Uniform("cameraPos", g_Renderer.GetViewCamera().GetOrientation().GetTranslation());
+
+	const CLightEnv& lightEnv = g_Renderer.GetLightEnv();
+
+	if (shadow)
+	{
+		shader->BindTexture("shadowTex", shadow->GetTexture());
+		shader->Uniform("shadowTransform", shadow->GetTextureMatrix());
+		int width = shadow->GetWidth();
+		int height = shadow->GetHeight();
+		shader->Uniform("shadowScale", width, height, 1.0f / width, 1.0f / height);
+	}
+
+	shader->Uniform("ambient", lightEnv.m_UnitsAmbientColor);
+	shader->Uniform("sunDir", lightEnv.GetSunDir());
+	shader->Uniform("sunColor", lightEnv.m_SunColor);
+
+	CLOSTexture& los = g_Renderer.GetScene().GetLOSTexture();
+	shader->BindTexture("losTex", los.GetTexture());
+	shader->Uniform("losTransform", los.GetTextureMatrix()[0], los.GetTextureMatrix()[12], 0.f, 0.f);
+
+	shader->Uniform("ambient", lightEnv.m_TerrainAmbientColor);
+	shader->Uniform("sunColor", lightEnv.m_SunColor);
+
+	shader->BindTexture("blendTex", g_Renderer.m_hCompositeAlphaMap);
+}
+
 // Types used for glMultiDrawElements batching:
 
 // To minimise the cost of memory allocations, everything used for computing
@@ -708,7 +740,8 @@ typedef POOLED_BATCH_MAP(CVertexBuffer*, IndexBufferBatches) VertexBufferBatches
 // Group batches by texture
 typedef POOLED_BATCH_MAP(CTerrainTextureEntry*, VertexBufferBatches) TextureBatches;
 
-void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CShaderProgramPtr& shader, bool isDummyShader)
+void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CShaderDefines& context, 
+			      ShadowMap* shadow, bool isDummyShader)
 {
 	Allocators::Arena<> arena(ARENA_SIZE);
 
@@ -744,8 +777,15 @@ void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CS
  	// Render each batch
  	for (TextureBatches::iterator itt = batches.begin(); itt != batches.end(); ++itt)
 	{
+		CShaderTechniquePtr techBase = g_Renderer.GetShaderManager().LoadEffect(itt->first->GetMaterial().GetShaderEffect(), context, itt->first->GetMaterial().GetShaderDefines());
+	
+		techBase->BeginPass();
+		PrepareShader(techBase->GetShader(), shadow);
+		
+		const CShaderProgramPtr& shader = techBase->GetShader(0);
+		
 		if (itt->first)
-		{
+		{			
 			shader->BindTexture("baseTex", itt->first->GetTexture());
 
 #if !CONFIG2_GLES
@@ -797,6 +837,8 @@ void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CS
 				g_Renderer.m_Stats.m_TerrainTris += std::accumulate(batch.first.begin(), batch.first.end(), 0) / 3;
 			}
 		}
+		
+		techBase->EndPass();
 	}
 
 #if !CONFIG2_GLES
@@ -842,12 +884,17 @@ struct SBlendStackItem
 	SplatStack splats;
 };
 
-void CPatchRData::RenderBlends(const std::vector<CPatchRData*>& patches, const CShaderProgramPtr& shader, bool isDummyShader)
+void CPatchRData::RenderBlends(const std::vector<CPatchRData*>& patches, const CShaderDefines& context, 
+			      ShadowMap* shadow, bool isDummyShader)
 {
 	Allocators::Arena<> arena(ARENA_SIZE);
 
 	typedef std::vector<SBlendBatch, ProxyAllocator<SBlendBatch, Allocators::Arena<> > > BatchesStack;
 	BatchesStack batches((BatchesStack::allocator_type(arena)));
+	
+	CShaderDefines contextBlend = context;
+	
+	contextBlend.Add("BLEND", "1");
 
  	PROFILE_START("compute batches");
 
@@ -929,6 +976,13 @@ void CPatchRData::RenderBlends(const std::vector<CPatchRData*>& patches, const C
 
  	for (BatchesStack::iterator itt = batches.begin(); itt != batches.end(); ++itt)
 	{
+		CShaderTechniquePtr techBase = g_Renderer.GetShaderManager().LoadEffect(itt->m_Texture->GetMaterial().GetShaderEffect(), contextBlend, itt->m_Texture->GetMaterial().GetShaderDefines());
+	
+		techBase->BeginPass();
+		PrepareShader(techBase->GetShader(), shadow);
+		
+		const CShaderProgramPtr& shader = techBase->GetShader(0);
+		
 		if (itt->m_Texture)
 		{
 			shader->BindTexture("baseTex", itt->m_Texture->GetTexture());
@@ -988,6 +1042,8 @@ void CPatchRData::RenderBlends(const std::vector<CPatchRData*>& patches, const C
 				g_Renderer.m_Stats.m_TerrainTris += std::accumulate(batch.first.begin(), batch.first.end(), 0) / 3;
 			}
 		}
+		
+		techBase->EndPass();
 	}
 
 #if !CONFIG2_GLES

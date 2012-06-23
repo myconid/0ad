@@ -23,6 +23,7 @@
 #include "maths/Vector3D.h"
 #include "graphics/RenderableObject.h"
 #include "graphics/ShaderProgram.h"
+#include "renderer/ShadowMap.h"
 #include "VertexBufferManager.h"
 
 class CPatch;
@@ -45,11 +46,15 @@ public:
 
 	void RenderWater(CShaderProgramPtr& shader);
 
-	static void RenderBases(const std::vector<CPatchRData*>& patches, const CShaderProgramPtr& shader, bool isDummyShader);
-	static void RenderBlends(const std::vector<CPatchRData*>& patches, const CShaderProgramPtr& shader, bool isDummyShader);
+	static void RenderBases(const std::vector<CPatchRData*>& patches, const CShaderDefines& context, 
+				ShadowMap* shadow, bool isDummyShader);
+	static void RenderBlends(const std::vector<CPatchRData*>& patches, const CShaderDefines& context, 
+				ShadowMap* shadow, bool isDummyShader);
 	static void RenderStreams(const std::vector<CPatchRData*>& patches, const CShaderProgramPtr& shader, int streamflags);
 
 	CPatch* GetPatch() { return m_Patch; }
+	
+	static void PrepareShader(const CShaderProgramPtr& shader, ShadowMap* shadow);
 
 	const CBoundingBoxAligned& GetWaterBounds() const { return m_WaterBounds; }
 
