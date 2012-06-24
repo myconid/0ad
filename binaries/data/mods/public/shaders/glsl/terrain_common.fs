@@ -164,7 +164,8 @@ vec4 triplanar(sampler2D sampler, vec3 wpos, float scale)
 
 	// Blend the results of the 3 planar projections.
 	vec4 col1 = texture2D( sampler, coords.yz / 32 );
-	vec4 col2 = texture2D( sampler, getcoord(coords.zx) );
+	//vec4 col2 = texture2D( sampler, getcoord(coords.zx) );
+	vec4 col2 = texture2D( sampler, coords.zx / 32 );
 	vec4 col3 = texture2D( sampler, coords.xy / 32 );
 	vec4 colBlended = col1 * blending.x + col2 * blending.y + col3 * blending.z;
 	//vec4 colBlended = color;
