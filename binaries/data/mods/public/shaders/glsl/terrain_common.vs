@@ -16,14 +16,14 @@ uniform mat4 shadowTransform;
 #if !USE_NORMAL_MAP
    varying vec3 v_lighting;
 #endif
-varying vec2 v_tex;
+varying vec3 v_tex;
 varying vec4 v_shadow;
 varying vec2 v_los;
 varying vec2 v_blend;
 
+varying vec3 v_normal;
 
 #if USE_SPECULAR || USE_NORMAL_MAP || USE_SPECULAR_MAP || USE_PARALLAX_MAP
-  varying vec3 v_normal;
   #if USE_NORMAL_MAP || USE_PARALLAX_MAP
     varying vec4 v_tangent;
     varying vec3 v_bitangent;
@@ -58,12 +58,14 @@ void main()
   #endif
   
   #if DECAL
-    v_tex = a_uv0;
+    v_tex.xy = a_uv0;
   #else
     // Compute texcoords from position and terrain-texture-dependent transform
     float c = textureTransform.x;
     float s = -textureTransform.y;
-    v_tex = vec2(a_vertex.x * c + a_vertex.z * -s, a_vertex.x * -s + a_vertex.z * -c);
+    ///v_tex = vec2(a_vertex.x * c + a_vertex.z * -s, a_vertex.x * -s + a_vertex.z * -c);
+
+    v_tex = a_vertex;
 
     #if GL_ES
       // XXX: Ugly hack to hide some precision issues in GLES
@@ -92,9 +94,9 @@ void main()
     v_half = normalize(sunVec + eyeVec);
     v_normal = normal;
   #endif*/
+  v_normal = a_normal;
 
   #if USE_SPECULAR || USE_NORMAL_MAP || USE_SPECULAR_MAP || USE_PARALLAX_MAP
-    v_normal = a_normal;
     //v_normal = vec3(0,1,0);
 
     #if USE_NORMAL_MAP || USE_PARALLAX_MAP
