@@ -85,7 +85,7 @@ float get_shadow()
   #endif
 }
 
-vec4 triplanar1(sampler2D samp, vec3 wpos, float scale)
+/*vec4 triplanar1(sampler2D samp, vec3 wpos, float scale)
 {
   //float tighten = 0.4679f;
   float tighten = 0.379f;
@@ -104,12 +104,7 @@ v += texture2D(samp, wpos.yx * 15.96) * 0.25;
 
   nabs /= vec3(nabs.x + nabs.y + nabs.z);
   //nabs = (nabs - 0.2) * 7; 
-  /*nabs -= vec3(tighten);
-  nabs = max(nabs, 0);
 
-  
-scale = 1/32.0;;
-*/
 
   float c = textureTransform.x;
   float s = -textureTransform.y;
@@ -123,25 +118,11 @@ scale = 1/32.0;;
   tr = vec2(wpos.y * c + wpos.z * -s, wpos.y * -s + wpos.z * -c);
   vec4 cYZ = texture2D(samp, tr); 
 
-  /**vec4 cXY = texture2D(samp, wpos.xy * scale);
-  vec4 cXZ = texture2D(samp, wpos.xz * scale);
-  vec4 cYZ = texture2D(samp, wpos.yz * scale);*/
-
-  /*vec4 cXY = texture2D(samp, wpos.xy * scale);
-  vec4 cXZ = texture2D(samp, wpos.xz * scale);
-  vec4 cYZ = texture2D(samp, wpos.yz * scale);*/
-
-  /*vec4 col1 = texture2D(samp, wpos.xy * scale); //colorTex1.Sample(coord1);  
-  vec4 col2 = texture2D(samp, wpos.xy * scale); //colorTex2.Sample(coord2);  
-  vec4 col3 = texture2D(samp, wpos.xy * scale); //colorTex3.Sample(coord3); */
 
   //return cXY * nabs.z + cXZ * nabs.y + cYZ * nabs.x;
   return cXY * nabs.z + cXZ * nabs.y + cYZ * nabs.x;  
 
-  /*return        col1.xyzw * blend_weights.xxxx +  
-                col2.xyzw * blend_weights.yyyy +  
-                col3.xyzw * blend_weights.zzzz;  */
-}
+}*/
 
 vec2 getcoord(vec2 wpos)
 {
@@ -154,7 +135,7 @@ vec4 triplanar(sampler2D sampler, vec3 wpos, float scale)
 {
 	vec3 blending = (abs( v_normal ) - 0.2) * 7.0;  
 	blending = normalize(max(blending, 0.0));      // Force weights to sum to 1.0 (very important!)  
-	blending /= (blending.x + blending.y + blending.z ).xxx;
+	blending /= vec3(blending.x + blending.y + blending.z );
 
 	//blending = abs( normal );
 	vec3 signedBlending = sign(v_normal) * blending;
@@ -163,10 +144,10 @@ vec4 triplanar(sampler2D sampler, vec3 wpos, float scale)
 	vec3 coords = v_tex;// * 1.0 / 32.0;
 
 	// Blend the results of the 3 planar projections.
-	vec4 col1 = texture2D( sampler, coords.yz / 32 );
+	vec4 col1 = texture2D( sampler, coords.yz / 32.0 );
 	//vec4 col2 = texture2D( sampler, getcoord(coords.zx) );
-	vec4 col2 = texture2D( sampler, coords.zx / 32 );
-	vec4 col3 = texture2D( sampler, coords.xy / 32 );
+	vec4 col2 = texture2D( sampler, coords.zx / 32.0 );
+	vec4 col3 = texture2D( sampler, coords.xy / 32.0 );
 	vec4 colBlended = col1 * blending.x + col2 * blending.y + col3 * blending.z;
 	//vec4 colBlended = color;
 
@@ -177,7 +158,7 @@ vec4 triplanar(sampler2D sampler, vec3 wpos, float scale)
 
 
 
-vec4 triplanar2(sampler2D samp, vec3 wpos, float scale)
+/*vec4 triplanar2(sampler2D samp, vec3 wpos, float scale)
 {
 	vec3 tpweights = abs(normalize(v_normal)) - 0.4679f;
         //tpweights = (tpweights - 0.2) * 7.0;
@@ -201,7 +182,7 @@ vec4 triplanar2(sampler2D samp, vec3 wpos, float scale)
 	
 	return ddc;
 
-}
+}*/
 
 void main()
 {
