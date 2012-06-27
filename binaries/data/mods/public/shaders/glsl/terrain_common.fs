@@ -24,11 +24,20 @@ uniform vec3 sunDir;
 
 uniform vec2 textureTransform;
 
-varying vec3 v_lighting;
-varying vec3 v_tex;
+#if !USE_NORMAL_MAP
+   varying vec3 v_lighting;
+#endif
+
 varying vec4 v_shadow;
 varying vec2 v_los;
 varying vec2 v_blend;
+
+#if USE_TRIPLANAR
+  varying vec3 v_tex;
+#else
+  varying vec2 v_tex;
+#endif
+
 
 /*#if USE_SPECULAR
   uniform float specularPower;
@@ -124,6 +133,7 @@ v += texture2D(samp, wpos.yx * 15.96) * 0.25;
 
 }*/
 
+#if USE_TRIPLANAR
 vec2 getcoord(vec2 wpos)
 {
 	float c = textureTransform.x;
@@ -131,29 +141,99 @@ vec2 getcoord(vec2 wpos)
 	return vec2(wpos.x * c + wpos.y * -s, wpos.x * -s + wpos.y * -c);
 }
 
-vec4 triplanar(sampler2D sampler, vec3 wpos, float scale)
+vec4 triplanar(sampler2D sampler, vec3 wpos)
 {
-	vec3 blending = (abs( v_normal ) - 0.2) * 7.0;  
-	blending = normalize(max(blending, 0.0));      // Force weights to sum to 1.0 (very important!)  
-	blending /= vec3(blending.x + blending.y + blending.z );
+	//vec3 blending = (abs( v_normal ) - 0.2) * 7.0;
 
-	//blending = abs( normal );
+	//vec3 blending = (abs( v_normal ) - 0.4679f);
+	//blending = normalize(max(blending, 0.0));
+
+	float tighten = 0.4679f;
+
+	vec3 blending = abs(normalize(v_normal)) - tighten;
+	blending = max(blending, 0.0);
+
+	blending /= vec3(blending.x + blending.y + blending.z);
+
 	vec3 signedBlending = sign(v_normal) * blending;
 
-	// texture coords
-	vec3 coords = v_tex;// * 1.0 / 32.0;
+	vec3 coords = wpos;// * 1.0 / 32.0;
+	//coords.xz = getcoord(coords.xz);
+	coords.xyz /= 32.0;
+
+	/**vec4 col1 = texture2D(sampler, coords.zy);
+	vec4 col2 = texture2D(sampler, coords.zx);
+	vec4 col3 = texture2D(sampler, coords.yx);*/
+
+	/**vec4 col1 = texture2D(sampler, coords.zy);
+	vec4 col2 = texture2D(sampler, coords.zx);
+	vec4 col3 = texture2D(sampler, coords.yx);*/
+
+	vec4 col1 = texture2D(sampler, coords.yz);
+	vec4 col2 = texture2D(sampler, coords.zx);
+	vec4 col3 = texture2D(sampler, coords.yx);
 
 	// Blend the results of the 3 planar projections.
-	vec4 col1 = texture2D( sampler, coords.yz / 32.0 );
+	///vec4 col1 = texture2D( sampler, coords.yz / 32.0 );
+	///////vec4 col1 = texture2D( sampler, coords.zy / 32.0 );
 	//vec4 col2 = texture2D( sampler, getcoord(coords.zx) );
-	vec4 col2 = texture2D( sampler, coords.zx / 32.0 );
-	vec4 col3 = texture2D( sampler, coords.xy / 32.0 );
+	///////vec4 col2 = texture2D( sampler, coords.zx / 32.0 );
+	//vec4 col3 = texture2D( sampler, coords.xy / 32.0 );
+	///////vec4 col3 = texture2D( sampler, coords.yx / 32.0 );
 	vec4 colBlended = col1 * blending.x + col2 * blending.y + col3 * blending.z;
 	//vec4 colBlended = color;
 
 	return colBlended;
 }
 
+vec4 triplanarNormals(sampler2D sampler, vec3 wpos)
+{
+	//vec3 blending = (abs( v_normal ) - 0.2) * 7.0;
+
+	//vec3 blending = (abs( v_normal ) - 0.4679f);
+	//blending = normalize(max(blending, 0.0));
+
+	float tighten = 0.4679f;
+
+	vec3 blending = abs(normalize(v_normal)) - tighten;
+	blending = max(blending, 0.0);
+
+	blending /= vec3(blending.x + blending.y + blending.z);
+
+	vec3 signedBlending = sign(v_normal) * blending;
+
+	vec3 coords = wpos;// * 1.0 / 32.0;
+	//coords.xz = getcoord(coords.xz);
+	coords.xyz /= 32.0;
+
+	/**vec4 col1 = texture2D(sampler, coords.zy);
+	vec4 col2 = texture2D(sampler, coords.zx);
+	vec4 col3 = texture2D(sampler, coords.yx);*/
+
+	/**vec4 col1 = texture2D(sampler, coords.zy);
+	vec4 col2 = texture2D(sampler, coords.zx);
+	vec4 col3 = texture2D(sampler, coords.yx);*/
+
+	vec4 col1 = texture2D(sampler, coords.yz).xyzw;
+	col1.y = 1.0 - col1.y;
+	vec4 col2 = texture2D(sampler, coords.zx).yxzw;
+	col2.y = 1.0 - col2.y;
+	vec4 col3 = texture2D(sampler, coords.yx).yxzw;
+	col3.y = 1.0 - col3.y;
+
+	// Blend the results of the 3 planar projections.
+	///vec4 col1 = texture2D( sampler, coords.yz / 32.0 );
+	///////vec4 col1 = texture2D( sampler, coords.zy / 32.0 );
+	//vec4 col2 = texture2D( sampler, getcoord(coords.zx) );
+	///////vec4 col2 = texture2D( sampler, coords.zx / 32.0 );
+	//vec4 col3 = texture2D( sampler, coords.xy / 32.0 );
+	///////vec4 col3 = texture2D( sampler, coords.yx / 32.0 );
+	vec4 colBlended = col1 * blending.x + col2 * blending.y + col3 * blending.z;
+	//vec4 colBlended = color;
+
+	return colBlended;
+}
+#endif
 
 
 
@@ -187,6 +267,10 @@ vec4 triplanar(sampler2D sampler, vec3 wpos, float scale)
 void main()
 {
   #if BLEND
+    #if USE_GRASS
+      discard;
+    #endif
+
     // Use alpha from blend texture
     gl_FragColor.a = 1.0 - texture2D(blendTex, v_blend).a;
   #endif
@@ -206,60 +290,14 @@ void main()
 
   vec4 tex = cXY * nabs.z + cXZ * nabs.y + cYZ * nabs.x; */
 
-  float uvScale = 1.0 / 32.0;
+  //float uvScale = 1.0 / 32.0;
 
-  vec4 tex = triplanar(baseTex, v_tex, uvScale);
+  #if USE_TRIPLANAR
+    vec4 tex = triplanar(baseTex, v_tex);
+  #else
+    vec4 tex = texture2D(baseTex, v_tex.xy);
+  #endif
 
-
-  
-
-/*  #if USE_PARALLAX_MAP
-  {
-    float h = texture2D(normTex, coord).a;
-    float sign = v_tangent.w;
-    //mat3 tbn = transpose(mat3(v_tangent.xyz, v_bitangent * sign, v_normal));
-
-    mat3 tbn = transpose(mat3(v_tangent.xyz, v_bitangent * sign, v_normal));
-
-    vec3 eyeDir = normalize(tbn * v_eyeVec);
-    float dist = length(v_eyeVec);
-
-    if (dist < 100 && h < 0.99)
-    {
-      //float scale = 0.0075;
-      float scale = 0.0175;
-
-      if (dist > 65)
-      {
-        scale = scale * (100 - dist) / 35.0;
-      }
-
-      float height = 1.0;
-      float iter;
-
-      float s;
-      vec2 move;
-      iter = (75 - (dist - 25)) / 3 + 5;
-
-      //if (iter > 15) iter = 15;
-
-      vec3 tangEye = -eyeDir;
-
-      //iter = mix(iter * 2, iter, tangEye.z);
-
-      s = 1.0 / iter;
-      move = vec2(-eyeDir.x, eyeDir.y) * scale / (eyeDir.z * iter);
-
-      while (h < height) 
-      {
-        height -= s;
-        coord += move;
-        h = texture2D(normTex, coord).a;
-      }
-
-    }
-  }
-  #endif*/
 
   //vec4 tex = texture2D(baseTex, coord);
 
@@ -278,8 +316,12 @@ void main()
   #if USE_NORMAL_MAP
     float sign = v_tangent.w;
     mat3 tbn = transpose(mat3(v_tangent.xyz, v_bitangent * -sign, v_normal));
-    ///vec3 ntex = texture2D(normTex, coord).rgb * 2.0 - 1.0;
-    vec3 ntex = triplanar(normTex, v_tex, uvScale).rgb * 2.0 - 1.0;
+
+    #if USE_TRIPLANAR
+      vec3 ntex = triplanarNormals(normTex, v_tex).rgb * 2.0 - 1.0;
+    #else
+      vec3 ntex = texture2D(normTex, v_tex).rgb * 2.0 - 1.0;
+    #endif
 
     normal = normalize(ntex * tbn);
     vec3 sundiffuse = max(dot(-sunDir, normal), 0.0) * sunColor;
@@ -293,8 +335,11 @@ void main()
     #if USE_SPECULAR
       specCol = specularColor;
     #else
-      //vec4 s = texture2D(specTex, coord);
-      vec4 s = triplanar(specTex, v_tex, uvScale);
+      #if USE_TRIPLANAR
+        vec4 s = triplanar(specTex, v_tex);
+      #else
+        vec4 s = texture2D(specTex, v_tex);
+      #endif
       specCol = s.rgb;
       specular.a = s.a;
     #endif
@@ -324,6 +369,10 @@ void main()
   #endif
 
   gl_FragColor.rgb = color;
+
+  #if USE_GRASS
+    gl_FragColor.a = tex.a;
+  #endif
 
   #if USE_SPECULAR_MAP
 	//gl_FragColor.rgb =  v_half;
