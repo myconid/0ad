@@ -780,12 +780,13 @@ void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CS
 
  	PROFILE_END("compute batches");
 	
-	glEnable(GL_BLEND);
+	//glEnable(GL_BLEND);
 
  	// Render each batch
  	for (TextureBatches::iterator itt = batches.begin(); itt != batches.end(); ++itt)
 	{
-		if (itt->first->GetMaterial().GetSamplers().size() == 0)
+		//if (itt->first->GetMaterial().GetSamplers().size() == 0)
+		if (itt->first->GetMaterial().GetShaderEffect().length() == 0)
 			continue;
 					
 		CShaderTechniquePtr techBase = g_Renderer.GetShaderManager().LoadEffect(itt->first->GetMaterial().GetShaderEffect(), context, itt->first->GetMaterial().GetShaderDefines());
@@ -797,7 +798,8 @@ void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CS
 			
 			const CShaderProgramPtr& shader = techBase->GetShader(pass);
 				
-			if (itt->first)
+			//if (itt->first)
+			if (itt->first->GetMaterial().GetSamplers().size() != 0)
 			{			
 				//shader->BindTexture("baseTex", itt->first->GetTexture());
 				

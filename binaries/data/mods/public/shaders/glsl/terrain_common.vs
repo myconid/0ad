@@ -58,9 +58,14 @@ void main()
 
 
   #if USE_GRASS
-    #if BLEND
+    /*#if BLEND
+      gl_Position = vec4(0.0);
+      v_tex.xy = vec2(0.0);
+      v_blend = vec2(0.0);
+      v_los = vec2(0.0);
+      v_lighting = vec3(0.0);
       return;
-    #endif
+    #endif*/
 
     //position.xyz = a_vertex + (a_normal * 0.025 * LAYER);
     position.y = a_vertex.y + (a_normal.y * 0.035 * LAYER);
