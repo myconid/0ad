@@ -273,6 +273,8 @@ void main()
 
     // Use alpha from blend texture
     gl_FragColor.a = 1.0 - texture2D(blendTex, v_blend).a;
+  #else
+    gl_FragColor.a = 1.0;
   #endif
 
   //vec2 coord = v_tex.xy;

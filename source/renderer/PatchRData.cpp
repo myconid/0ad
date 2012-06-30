@@ -1016,6 +1016,7 @@ void CPatchRData::RenderBlends(const std::vector<CPatchRData*>& patches, const C
 		{
 	
 			techBase->BeginPass(pass);
+	
 			PrepareShader(techBase->GetShader(), shadow);
 				
 			const CShaderProgramPtr& shader = techBase->GetShader(pass);

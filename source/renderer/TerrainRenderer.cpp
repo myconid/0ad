@@ -531,8 +531,7 @@ void TerrainRenderer::RenderTerrainShader(const CShaderDefines& context, ShadowM
 	//PrepareShader(techBlend->GetShader(), shadow);
 
 	// switch on blending
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	
 
 	// no need to write to the depth buffer a second time
 	glDepthMask(0);
