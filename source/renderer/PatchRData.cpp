@@ -787,7 +787,10 @@ void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CS
 	{
 		//if (itt->first->GetMaterial().GetSamplers().size() == 0)
 		if (itt->first->GetMaterial().GetShaderEffect().length() == 0)
+		{
+			LOGERROR(L"Terrain renderer failed to load shader effect.\n");
 			continue;
+		}
 					
 		CShaderTechniquePtr techBase = g_Renderer.GetShaderManager().LoadEffect(itt->first->GetMaterial().GetShaderEffect(), context, itt->first->GetMaterial().GetShaderDefines());
 		
