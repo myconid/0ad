@@ -780,6 +780,7 @@ void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CS
 
  	PROFILE_END("compute batches");
 	
+	//glEnable(GL_DEPTH_TEST);
 	//glEnable(GL_BLEND);
 
  	// Render each batch
