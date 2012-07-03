@@ -175,6 +175,8 @@ MESSAGEHANDLER(ImportHeightmap)
 	fileData = shared_ptr<u8>(new u8[fileSize]);
 	
 	read(file.Descriptor(), fileData.get(), fileSize);
+	
+	file.Close();
 
 	Tex tex;
 	if (tex_decode(fileData, fileSize, &tex) < 0)
@@ -183,13 +185,9 @@ MESSAGEHANDLER(ImportHeightmap)
 		return;
 	}
 
-	// Check whether there's any alpha channel
-	bool hasAlpha = ((tex.flags & TEX_ALPHA) != 0);
-
 	// Convert to uncompressed BGRA with no mipmaps
 	if (tex_transform_to(&tex, (tex.flags | TEX_BGR | TEX_ALPHA) & ~(TEX_DXT | TEX_MIPMAPS)) < 0)
 	{
-		//LOGERROR(L"Failed to transform texture \"%ls\"", src.c_str());
 		LOGERROR(L"Failed to transform heightmap.");
 		tex_free(&tex);
 		return;
@@ -214,25 +212,6 @@ MESSAGEHANDLER(ImportHeightmap)
 			heightmap[y * hmSize + x] = mapdata[y * mapLineSkip + x * bytesPP] * 256;
 		}
 	}
-	
-	
-	
-	// Check if the texture has all alpha=255, so we can automatically
-	// switch from DXT3/DXT5 to DXT1 with no loss
-	/*if (hasAlpha)
-	{
-		hasAlpha = false;
-		u8* data = tex_get_data(&tex);
-		for (size_t i = 0; i < tex.w * tex.h; ++i)
-		{
-			if (data[i*4+3] != 0xFF)
-			{
-				hasAlpha = true;
-				break;
-			}
-		}
-	}*/
-	
 	
 	tex_free(&tex);
 	
