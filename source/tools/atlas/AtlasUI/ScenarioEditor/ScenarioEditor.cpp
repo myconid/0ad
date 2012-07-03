@@ -731,26 +731,10 @@ void ScenarioEditor::OnImportHeightmap(wxCommandEvent& WXUNUSED(event))
 	if (dlg.ShowModal() != wxID_OK)
 		return;
 	
-	//wxFileName filename(dlg.GetFilename());
-	
-	/*if (!OpenFile(filename.GetName(), filename.GetFullName()))
-	{
-		wxLogError(_("Image '%ls' does not exist"), filename.GetName().c_str());
-	}*/
-	
-	
 	OpenFile(_T("_default"), _T(""));
 	
-	//std::wstring image(filename.GetFullPath().wc_str());
 	std::wstring image(dlg.GetPath().wc_str());
 	POST_MESSAGE(ImportHeightmap, (image));
-	
-	
-	/*if (!OpenFile(filename.GetName(), filename.GetFullName()))
-	{
-		wxLogError(_("Map '%ls' does not exist"), filename.GetName().c_str());
-	}*/
-	
 
 	// TODO: Make this a non-undoable command
 }
