@@ -28,6 +28,10 @@
 #include "graphics/Terrain.h"
 #include "graphics/TerrainTextureEntry.h"
 #include "graphics/TerrainTextureManager.h"
+#include "lib/tex/tex.h"
+#include "lib/file/file.h"
+#include "ps/CLogger.h"
+#include "ps/Filesystem.h"
 #include "ps/Game.h"
 #include "ps/Loader.h"
 #include "ps/World.h"
@@ -133,6 +137,107 @@ MESSAGEHANDLER(LoadMap)
 
 	StartGame(attrs);
 }
+
+MESSAGEHANDLER(ImportHeightmap)
+{
+	/*InitGame();
+
+	// Scenario
+	CStrW map = *msg->filename;
+	CStrW mapBase = map.BeforeLast(L".pmp"); // strip the file extension, if any
+
+	ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
+	
+	CScriptValRooted attrs;
+	scriptInterface.Eval("({})", attrs);
+	scriptInterface.SetProperty(attrs.get(), "mapType", std::string("scenario"));
+	scriptInterface.SetProperty(attrs.get(), "map", std::wstring(mapBase));
+
+	StartGame(attrs);*/
+	CStrW src = *msg->filename;
+	
+	std::wcout << src << std::endl;
+	
+	size_t fileSize;
+	shared_ptr<u8> fileData;
+	
+	File file;
+	
+	if (file.Open(src, O_RDONLY) < 0)
+	{
+		LOGERROR(L"Failed to load heightmap.");
+		return;
+	}
+	
+	fileSize = lseek(file.Descriptor(), 0, SEEK_END);
+	lseek(file.Descriptor(), 0, SEEK_SET);
+	
+	fileData = shared_ptr<u8>(new u8[fileSize]);
+	
+	read(file.Descriptor(), fileData.get(), fileSize);
+
+	Tex tex;
+	if (tex_decode(fileData, fileSize, &tex) < 0)
+	{
+		LOGERROR(L"Failed to decode heightmap.");
+		return;
+	}
+
+	// Check whether there's any alpha channel
+	bool hasAlpha = ((tex.flags & TEX_ALPHA) != 0);
+
+	// Convert to uncompressed BGRA with no mipmaps
+	if (tex_transform_to(&tex, (tex.flags | TEX_BGR | TEX_ALPHA) & ~(TEX_DXT | TEX_MIPMAPS)) < 0)
+	{
+		//LOGERROR(L"Failed to transform texture \"%ls\"", src.c_str());
+		LOGERROR(L"Failed to transform heightmap.");
+		tex_free(&tex);
+		return;
+	}
+
+	
+	u16* heightmap = g_Game->GetWorld()->GetTerrain()->GetHeightMap();
+	ssize_t hmSize = g_Game->GetWorld()->GetTerrain()->GetVerticesPerSide();
+	
+	ssize_t edgeH = std::min(hmSize, (ssize_t)tex.h);
+	ssize_t edgeW = std::min(hmSize, (ssize_t)tex.w);
+	
+	
+	u8* mapdata = tex_get_data(&tex);
+	ssize_t bytesPP = tex.bpp / 8;
+	ssize_t mapLineSkip = tex.w * bytesPP;
+	
+	for (ssize_t y = 0; y < edgeH; ++y)
+	{
+		for (ssize_t x = 0; x < edgeW; ++x)
+		{
+			heightmap[y * hmSize + x] = mapdata[y * mapLineSkip + x * bytesPP] * 256;
+		}
+	}
+	
+	
+	
+	// Check if the texture has all alpha=255, so we can automatically
+	// switch from DXT3/DXT5 to DXT1 with no loss
+	/*if (hasAlpha)
+	{
+		hasAlpha = false;
+		u8* data = tex_get_data(&tex);
+		for (size_t i = 0; i < tex.w * tex.h; ++i)
+		{
+			if (data[i*4+3] != 0xFF)
+			{
+				hasAlpha = true;
+				break;
+			}
+		}
+	}*/
+	
+	
+	tex_free(&tex);
+	
+}
+
 
 MESSAGEHANDLER(SaveMap)
 {
