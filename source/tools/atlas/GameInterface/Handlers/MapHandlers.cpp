@@ -140,23 +140,7 @@ MESSAGEHANDLER(LoadMap)
 
 MESSAGEHANDLER(ImportHeightmap)
 {
-	/*InitGame();
-
-	// Scenario
-	CStrW map = *msg->filename;
-	CStrW mapBase = map.BeforeLast(L".pmp"); // strip the file extension, if any
-
-	ScriptInterface& scriptInterface = g_Game->GetSimulation2()->GetScriptInterface();
-	
-	CScriptValRooted attrs;
-	scriptInterface.Eval("({})", attrs);
-	scriptInterface.SetProperty(attrs.get(), "mapType", std::string("scenario"));
-	scriptInterface.SetProperty(attrs.get(), "map", std::wstring(mapBase));
-
-	StartGame(attrs);*/
 	CStrW src = *msg->filename;
-	
-	std::wcout << src << std::endl;
 	
 	size_t fileSize;
 	shared_ptr<u8> fileData;
