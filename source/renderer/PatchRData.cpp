@@ -1021,6 +1021,9 @@ void CPatchRData::RenderBlends(const std::vector<CPatchRData*>& patches, const C
 			PrepareShader(techBase->GetShader(), shadow);
 				
 			const CShaderProgramPtr& shader = techBase->GetShader(pass);
+			
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 				
 			if (itt->m_Texture)
 			{
