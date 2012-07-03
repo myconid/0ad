@@ -57,7 +57,7 @@ void main()
   vec4 position = vec4(a_vertex, 1.0);
 
 
-  #if USE_GRASS
+  #if USE_GRASS && LAYER
     /*#if BLEND
       gl_Position = vec4(0.0);
       v_tex.xy = vec2(0.0);

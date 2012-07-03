@@ -268,11 +268,16 @@ void main()
 {
   #if BLEND
     #if USE_GRASS
-      discard;
+      //discard;
     #endif
 
     // Use alpha from blend texture
     gl_FragColor.a = 1.0 - texture2D(blendTex, v_blend).a;
+
+    #if USE_GRASS
+      if (gl_FragColor.a < LAYER / 10.0)
+        discard;
+    #endif
   #else
     gl_FragColor.a = 1.0;
   #endif
@@ -300,6 +305,10 @@ void main()
     vec4 tex = texture2D(baseTex, v_tex.xy);
   #endif
 
+  #if USE_GRASS
+    if (tex.a < 0.15)
+      discard;
+  #endif
 
   //vec4 tex = texture2D(baseTex, coord);
 
