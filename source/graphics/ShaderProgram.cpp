@@ -237,6 +237,12 @@ public:
 		ENSURE(count == 1);
 		Uniform(id, v[0]);
 	}
+	
+	virtual void VertexAttribPointer(const char* id, GLint size, GLenum type, GLboolean normalized, GLsizei stride, void* pointer)
+	{
+		TexCoordPointer(GL_TEXTURE2, size, type, stride, pointer);
+	}
+	
 
 private:
 	VfsPath m_VertexFile;
@@ -847,7 +853,7 @@ void CShaderProgram::TexCoordPointer(GLenum texture, GLint size, GLenum type, GL
 
 void CShaderProgram::BindClientStates()
 {
-	ENSURE(m_StreamFlags == (m_StreamFlags & (STREAM_POS|STREAM_NORMAL|STREAM_COLOR|STREAM_UV0|STREAM_UV1)));
+	ENSURE(m_StreamFlags == (m_StreamFlags & (STREAM_POS|STREAM_NORMAL|STREAM_COLOR|STREAM_UV0|STREAM_UV1|STREAM_UV2)));
 
 	// Enable all the desired client states for non-GLSL rendering
 
@@ -867,7 +873,15 @@ void CShaderProgram::BindClientStates()
 		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 		pglClientActiveTextureARB(GL_TEXTURE0);
 	}
-
+	if (m_StreamFlags & STREAM_UV2)
+	{
+		pglClientActiveTextureARB(GL_TEXTURE2);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		pglClientActiveTextureARB(GL_TEXTURE1);
+		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+		pglClientActiveTextureARB(GL_TEXTURE0);
+	}
+	
 	// Rendering code must subsequently call VertexPointer etc for all of the streams
 	// that were activated in this function, else AssertPointersBound will complain
 	// that some arrays were unspecified
@@ -888,6 +902,14 @@ void CShaderProgram::UnbindClientStates()
 
 	if (m_StreamFlags & STREAM_UV1)
 	{
+		pglClientActiveTextureARB(GL_TEXTURE1);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		pglClientActiveTextureARB(GL_TEXTURE0);
+	}
+	if (m_StreamFlags & STREAM_UV2)
+	{
+		pglClientActiveTextureARB(GL_TEXTURE2);
+		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		pglClientActiveTextureARB(GL_TEXTURE1);
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 		pglClientActiveTextureARB(GL_TEXTURE0);

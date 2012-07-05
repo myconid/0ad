@@ -2,3 +2,5 @@ binaries/system/AtlasUI.dll
 binaries/system/Collada.dll
 binaries/system/pyrogenesis.exe
 binaries/system/pyrogenesis.pdb
+
+.DS_Store

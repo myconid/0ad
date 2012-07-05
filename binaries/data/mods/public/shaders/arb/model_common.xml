@@ -11,6 +11,8 @@
         <uniform name="shadowScale" loc="12" type="vec4"/>
         <stream name="pos"/>
         <stream name="normal"/>
+        <stream if="USE_NORMAL_MAP" name="uv2"/>
+        <stream if = "USE_INSTANCING" name="uv1"/>
         <stream name="uv0"/>
     </vertex>
 
@@ -18,6 +20,9 @@
         <uniform name="baseTex" loc="0" type="sampler2D"/>
         <uniform name="shadowTex" loc="1" type="sampler2DShadow"/>
         <uniform name="losTex" loc="2" type="sampler2D"/>
+        <uniform if="USE_SPECULAR_MAP" name="specTex" loc="3" type="sampler2D"/>
+        <uniform if="USE_NORMAL_MAP" name="normTex" loc="4" type="sampler2D"/>
+        <uniform if="USE_AO" name="aoTex" loc="5" type="sampler2D"/>
 
         <uniform if="USE_OBJECTCOLOR" name="objectColor" loc="0" type="vec3"/>
         <uniform if="USE_PLAYERCOLOR" name="playerColor" loc="0" type="vec3"/>

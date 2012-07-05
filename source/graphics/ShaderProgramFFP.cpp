@@ -185,7 +185,7 @@ public:
 		m_IgnoreLos = (defines.GetInt("IGNORE_LOS") != 0);
 		m_UseObjectColor = (defines.GetInt("USE_OBJECTCOLOR") != 0);
 
-		m_StreamFlags = STREAM_POS | STREAM_UV0 | STREAM_UV1;
+		m_StreamFlags = STREAM_POS | STREAM_UV0 | STREAM_UV1 | STREAM_UV2;
 		if (!m_UseObjectColor)
 			m_StreamFlags |= STREAM_COLOR;
 	}

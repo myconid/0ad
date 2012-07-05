@@ -60,11 +60,11 @@ struct IModelDef : public CModelDefRPrivate
 	/// Indices are the same for all models, so share them
 	VertexIndexArray m_IndexArray;
 
-	IModelDef(const CModelDefPtr& mdef, bool gpuSkinning, bool calculateTangents);
+	IModelDef(const CModelDefPtr& mdef, bool gpuSkinning, bool calculateTangents, bool preferGLSL);
 };
 
 
-IModelDef::IModelDef(const CModelDefPtr& mdef, bool gpuSkinning, bool calculateTangents)
+IModelDef::IModelDef(const CModelDefPtr& mdef, bool gpuSkinning, bool calculateTangents, bool preferGLSL)
 	: m_IndexArray(GL_STATIC_DRAW), m_Array(GL_STATIC_DRAW)
 {
 	size_t numVertices = mdef->GetNumVertices();
@@ -226,6 +226,7 @@ struct InstancingModelRendererInternals
 	bool gpuSkinning;
 	
 	bool calculateTangents;
+	bool preferGLSL;
 
 	/// Previously prepared modeldef
 	IModelDef* imodeldef;
@@ -236,11 +237,12 @@ struct InstancingModelRendererInternals
 
 
 // Construction and Destruction
-InstancingModelRenderer::InstancingModelRenderer(bool gpuSkinning, bool calculateTangents)
+InstancingModelRenderer::InstancingModelRenderer(bool gpuSkinning, bool calculateTangents, bool preferGLSL)
 {
 	m = new InstancingModelRendererInternals;
 	m->gpuSkinning = gpuSkinning;
 	m->calculateTangents = calculateTangents;
+	m->preferGLSL = preferGLSL;
 	m->imodeldef = 0;
 }
 
@@ -263,7 +265,7 @@ CModelRData* InstancingModelRenderer::CreateModelData(const void* key, CModel* m
 
 	if (!imodeldef)
 	{
-		imodeldef = new IModelDef(mdef, m->gpuSkinning, m->calculateTangents);
+		imodeldef = new IModelDef(mdef, m->gpuSkinning, m->calculateTangents, m->preferGLSL);
 		mdef->SetRenderData(m, imodeldef);
 	}
 
@@ -308,14 +310,16 @@ void InstancingModelRenderer::PrepareModelDef(const CShaderProgramPtr& shader, i
 	if (streamflags & STREAM_NORMAL)
 		shader->NormalPointer(GL_FLOAT, stride, base + m->imodeldef->m_Normal.offset);
 	
-	if (m->calculateTangents)
-		shader->VertexAttribPointer("a_tangent", 4, GL_FLOAT, GL_TRUE, stride, base + m->imodeldef->m_Tangent.offset);
-
 	if (streamflags & STREAM_UV0)
 		shader->TexCoordPointer(GL_TEXTURE0, 2, GL_FLOAT, stride, base + m->imodeldef->m_UVs[0].offset);
 	
-	if ((streamflags & STREAM_UV1) && def.GetNumUVsPerVertex() >= 2)
+	if ((streamflags & STREAM_UV1) && def.GetNumUVsPerVertex() >= 2) {
 		shader->TexCoordPointer(GL_TEXTURE1, 2, GL_FLOAT, stride, base + m->imodeldef->m_UVs[1].offset);
+	}
+	if (m->calculateTangents && m->preferGLSL)
+		shader->VertexAttribPointer("a_tangent", 4, GL_FLOAT, GL_TRUE, stride, base + m->imodeldef->m_Tangent.offset);
+	else if (m->calculateTangents && !m->preferGLSL)
+		shader->VertexAttribPointer("",4, GL_FLOAT, GL_TRUE, stride, base + m->imodeldef->m_Tangent.offset);
 
 	// GPU skinning requires extra attributes to compute positions/normals
 	if (m->gpuSkinning)

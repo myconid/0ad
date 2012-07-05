@@ -19,10 +19,25 @@ TEMP lighting;
 OUTPUT v_tex = result.texcoord[0];
 OUTPUT v_shadow = result.texcoord[1];
 OUTPUT v_los = result.texcoord[2];
-#if USE_SPECULAR
+#if USE_SPECULAR || USE_SPECULAR_MAP || USE_NORMAL_MAP  || USE_PARALLAX_MAP
   OUTPUT v_normal = result.texcoord[3];
   OUTPUT v_half = result.texcoord[4];
 #endif
+  #if USE_INSTANCING && (USE_NORMAL_MAP || USE_PARALLAX_MAP)
+  OUTPUT v_tangent = result.texcoord[5];
+  OUTPUT v_bitangent = result.texcoord[6];
+  OUTPUT v_sunDir = result.texcoord[7];
+	TEMP tangent;
+	TEMP bitangent;
+	MOV v_sunDir, sunDir;
+#endif
+  #if USE_INSTANCING && USE_PARALLAX_MAP
+    OUTPUT v_eyeVec = result.texcoord[8];
+  #endif
+//#if USE_AO
+//	OUTPUT v_texAO = result.texcoord[8];
+//	MOV v_texAO, vertex.texcoord[0];
+//#endif
   
 //// Compute position and normal:
 
@@ -36,6 +51,14 @@ OUTPUT v_los = result.texcoord[2];
   DP3 normal.x, instancingTransform[0], vertex.normal;
   DP3 normal.y, instancingTransform[1], vertex.normal;
   DP3 normal.z, instancingTransform[2], vertex.normal;
+  
+#if (USE_NORMAL_MAP || USE_PARALLAX_MAP)
+  DP3 tangent.x, instancingTransform[0], vertex.texcoord[2];
+  DP3 tangent.y, instancingTransform[1], vertex.texcoord[2];
+  DP3 tangent.z, instancingTransform[2], vertex.texcoord[2];
+  MOV tangent.w, vertex.texcoord[2].w;
+#endif
+
 #else
   ATTRIB position = vertex.position;
   ATTRIB normal = vertex.normal;
@@ -56,22 +79,33 @@ MUL lighting, lighting, 0.5;
 // Apply light colour
 MUL result.color, lighting, sunColor;
 
-#if USE_SPECULAR
-  // eyeVec = normalize(cameraPos - position);
-  TEMP eyeVec;
-  SUB eyeVec.xyz, cameraPos, position;
-  DP3 eyeVec.w, eyeVec, eyeVec;
-  RSQ eyeVec.w, eyeVec.w;
-  MUL eyeVec.xyz, eyeVec, eyeVec.w;
+#if USE_SPECULAR || USE_SPECULAR_MAP || USE_NORMAL_MAP || USE_PARALLAX_MAP
+    #if USE_INSTANCING && (USE_NORMAL_MAP || USE_PARALLAX_MAP)
+	//v_bitangent = cross(v_normal, v_tangent.xyz);
+	XPD bitangent, normal, tangent;
+	MOV v_tangent, tangent;
+	MOV v_bitangent, bitangent;
+	MOV v_bitangent.w, 1.0;
+    #endif
 
-  // v_half = normalize(-sunDir + eyeVec);
-  TEMP half;
-  SUB half.xyz, eyeVec, sunDir;
-  DP3 half.w, half, half;
-  RSQ half.w, half.w;
-  MUL v_half.xyz, half, half.w;
-
-  MOV v_normal, normal;
+	#if USE_SPECULAR || USE_SPECULAR_MAP || USE_PARALLAX_MAP
+	// eyeVec = normalize(cameraPos - position);
+	TEMP eyeVec;
+	SUB eyeVec.xyz, cameraPos, position;
+	DP3 eyeVec.w, eyeVec, eyeVec;
+	RSQ eyeVec.w, eyeVec.w;
+	MUL eyeVec.xyz, eyeVec, eyeVec.w;
+		#if USE_INSTANCING && USE_PARALLAX_MAP
+		MOV v_eyeVec, eyeVec;
+		#endif
+	// v_half = normalize(-sunDir + eyeVec);
+	TEMP half;
+	SUB half.xyz, eyeVec, sunDir;
+	DP3 half.w, half, half;
+	RSQ half.w, half.w;
+	MUL v_half.xyz, half, half.w;
+	#endif
+MOV v_normal, normal;  
 #endif
 
 //// Texture coordinates:

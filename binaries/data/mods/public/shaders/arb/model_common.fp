@@ -23,9 +23,18 @@ PARAM ambient = program.local[2];
   TEMP offset, size, weight;
 #endif
 
-#if USE_SPECULAR
+#if USE_SPECULAR || USE_SPECULAR_MAP || USE_NORMAL_MAP || USE_PARALLAX_MAP
   ATTRIB v_normal = fragment.texcoord[3];
   ATTRIB v_half = fragment.texcoord[4];
+    #if USE_INSTANCING && (USE_NORMAL_MAP || USE_PARALLAX_MAP)
+    ATTRIB v_tangent = fragment.texcoord[5];
+    ATTRIB v_bitangent = fragment.texcoord[6];
+    ATTRIB v_sunDir = fragment.texcoord[7];
+  #endif
+    //#if USE_INSTANCING && USE_PARALLAX_MAP
+    //ATTRIB v_eyeVec = fragment.texcoord[8];
+	//#endif
+
   PARAM specularPower = program.local[4];
   PARAM specularColor = program.local[5];
   PARAM sunColor = program.local[6];
@@ -63,14 +72,81 @@ TEX tex, v_tex, texture[0], 2D;
 #endif
 #endif
 
-#if USE_SPECULAR
+
+  MUL sundiffuse.rgb, fragment.color, 2.0;
+
+
+#if USE_NORMAL_MAP || USE_SPECULAR || USE_SPECULAR_MAP
   // specular = sunColor * specularColor * pow(max(0.0, dot(normalize(v_normal), v_half)), specularPower);
   TEMP specular;
   TEMP normal;
+  MOV normal, v_normal;
+  #if USE_NORMAL_MAP
+	TEMP tangent;
+	MOV tangent, v_tangent;
+
+	TEMP sign;
+	MOV sign, tangent.w;
+
+  //  mat3 tbn = transpose(mat3(v_tangent.xyz, v_bitangent * -sign, v_normal));
+	TEMP prod;
+	MUL prod, v_bitangent, -sign;
+    TEMP tbn[3];
+    TEMP tbn2[3];
+	MOV tbn[0], tangent;
+	MOV tbn[1], prod;
+	MOV tbn[2], normal;
+	
+	// Transposing, couldn't find a way
+	MOV tbn2[0].x, tbn[0].x;
+	MOV tbn2[0].y, tbn[1].x;
+	MOV tbn2[0].z, tbn[2].x;
+
+	MOV tbn2[1].x, tbn[0].y;
+	MOV tbn2[1].y, tbn[1].y;
+	MOV tbn2[1].z, tbn[2].y;
+	
+	MOV tbn2[2].x, tbn[0].z;
+	MOV tbn2[2].y, tbn[1].z;
+	MOV tbn2[2].z, tbn[2].z;
+	
+  //  vec3 ntex = texture2D(normTex, coord).rgb * 2.0 - 1.0;
+  	TEMP ntex;
+	TEX ntex, v_tex, texture[4], 2D;
+	MAD ntex, ntex, 2.0, -1.0;
+  //  normal = normalize(ntex * tbn);
+	DP3 normal.x, ntex, tbn2[0];
+	DP3 normal.y, ntex, tbn2[1];
+	DP3 normal.z, ntex, tbn2[2];
+	
+	// Normalization.
+	TEMP length;
+	DP3 length.w, normal, normal;
+	RSQ length.w, length.w;
+	MUL normal, normal, length.w;
+	
+  //  vec3 sundiffuse = max(dot(-sunDir, normal), 0.0) * sunColor;
+	TEMP DotDirNorm;
+	DP3 DotDirNorm, -v_sunDir, normal;
+	MAX DotDirNorm, DotDirNorm, 0.0;
+	MUL sundiffuse, DotDirNorm, sunColor;
+  #else
+  	TEMP length;
+	DP3 length.w, normal, normal;
+	RSQ length.w, length.w;
+	MUL normal, normal, length.w;
+  #endif
+
+#endif
+
+#if USE_SPECULAR || USE_SPECULAR_MAP  
+#if USE_SPECULAR
   MUL specular.rgb, specularColor, sunColor;
-  DP3 normal.w, v_normal, v_normal;
-  RSQ normal.w, normal.w;
-  MUL normal.xyz, v_normal, normal.w;
+#else
+	TEMP texSpecColor;
+	TEX texSpecColor, v_tex, texture[3], 2D;
+	MUL specular.rgb, texSpecColor, sunColor;
+#endif
   DP3_SAT temp.y, normal, v_half;
   // temp^p = (2^lg2(temp))^p = 2^(lg2(temp)*p)
   LG2 temp.y, temp.y;
@@ -122,9 +198,7 @@ TEX tex, v_tex, texture[0], 2D;
     SGE shadow.x, tex.x, temp.z;
   #endif
 
-  MUL sundiffuse.rgb, fragment.color, 2.0;
-
-  #if USE_SPECULAR
+  #if USE_SPECULAR || USE_SPECULAR_MAP
     MAD color.rgb, texdiffuse, sundiffuse, specular;
     MUL temp.rgb, texdiffuse, ambient;
     MAD color.rgb, color, shadow.x, temp;
@@ -134,7 +208,7 @@ TEX tex, v_tex, texture[0], 2D;
   #endif
   
 #else
-  #if USE_SPECULAR
+  #if USE_SPECULAR || USE_SPECULAR_MAP
     MAD temp.rgb, fragment.color, 2.0, ambient;
     MAD color.rgb, texdiffuse, temp, specular;
   #else

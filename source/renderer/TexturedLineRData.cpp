@@ -56,6 +56,8 @@ void CTexturedLineRData::Render(const SOverlayTexturedLine& line, const CShaderP
 
 	if (streamFlags & STREAM_UV1)
 		shader->TexCoordPointer(GL_TEXTURE1, 2, GL_FLOAT, stride, &vertexBase->m_UVs[0]);
+	if (streamFlags & STREAM_UV2)
+		shader->TexCoordPointer(GL_TEXTURE2, 2, GL_FLOAT, stride, &vertexBase->m_UVs[0]);
 
 	u8* indexBase = m_VBIndices->m_Owner->Bind();
 

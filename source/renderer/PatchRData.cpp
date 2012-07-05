@@ -1032,7 +1032,7 @@ void CPatchRData::RenderStreams(const std::vector<CPatchRData*>& patches, const 
 
  	PROFILE_END("compute batches");
 
-	ENSURE(!(streamflags & ~(STREAM_POS|STREAM_COLOR|STREAM_POSTOUV0|STREAM_POSTOUV1)));
+	ENSURE(!(streamflags & ~(STREAM_POS|STREAM_COLOR|STREAM_POSTOUV0|STREAM_POSTOUV1|STREAM_POSTOUV2)));
 
  	// Render each batch
  	for (VertexBufferBatches::iterator itv = batches.begin(); itv != batches.end(); ++itv)
@@ -1045,6 +1045,8 @@ void CPatchRData::RenderStreams(const std::vector<CPatchRData*>& patches, const 
 			shader->TexCoordPointer(GL_TEXTURE0, 3, GL_FLOAT, stride, &base->m_Position);
 		if (streamflags & STREAM_POSTOUV1)
 			shader->TexCoordPointer(GL_TEXTURE1, 3, GL_FLOAT, stride, &base->m_Position);
+		if (streamflags & STREAM_POSTOUV2)
+			shader->TexCoordPointer(GL_TEXTURE2, 3, GL_FLOAT, stride, &base->m_Position);
 		if (streamflags & STREAM_COLOR)
 			shader->ColorPointer(4, GL_UNSIGNED_BYTE, stride, &base->m_DiffuseColor);
 
