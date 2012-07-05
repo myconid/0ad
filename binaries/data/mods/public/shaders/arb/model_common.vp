@@ -34,10 +34,11 @@ OUTPUT v_los = result.texcoord[2];
   #if USE_INSTANCING && USE_PARALLAX_MAP
     OUTPUT v_eyeVec = result.texcoord[8];
   #endif
-//#if USE_AO
-//	OUTPUT v_texAO = result.texcoord[8];
-//	MOV v_texAO, vertex.texcoord[0];
-//#endif
+
+#if USE_INSTANCING && USE_AO
+	OUTPUT v_texAO = result.texcoord[9];
+	MOV v_texAO, vertex.texcoord[1];
+#endif
   
 //// Compute position and normal:
 

@@ -40,6 +40,10 @@ PARAM ambient = program.local[2];
   PARAM sunColor = program.local[6];
 #endif
 
+#if USE_INSTANCING && USE_AO
+  ATTRIB v_texAO = fragment.texcoord[9];
+#endif
+
 TEMP tex;
 TEMP texdiffuse;
 TEMP sundiffuse;
@@ -91,33 +95,31 @@ TEX tex, v_tex, texture[0], 2D;
   //  mat3 tbn = transpose(mat3(v_tangent.xyz, v_bitangent * -sign, v_normal));
 	TEMP prod;
 	MUL prod, v_bitangent, -sign;
-    TEMP tbn[3];
-    TEMP tbn2[3];
-	MOV tbn[0], tangent;
-	MOV tbn[1], prod;
-	MOV tbn[2], normal;
-	
-	// Transposing, couldn't find a way
-	MOV tbn2[0].x, tbn[0].x;
-	MOV tbn2[0].y, tbn[1].x;
-	MOV tbn2[0].z, tbn[2].x;
 
-	MOV tbn2[1].x, tbn[0].y;
-	MOV tbn2[1].y, tbn[1].y;
-	MOV tbn2[1].z, tbn[2].y;
-	
-	MOV tbn2[2].x, tbn[0].z;
-	MOV tbn2[2].y, tbn[1].z;
-	MOV tbn2[2].z, tbn[2].z;
+	TEMP tbn0;
+	TEMP tbn1;
+	TEMP tbn2;
+
+	MOV tbn0.x, tangent.x;
+	MOV tbn0.y, prod.x;
+	MOV tbn0.z, normal.x;
+
+	MOV tbn1.x, tangent.y;
+	MOV tbn1.y, prod.y;
+	MOV tbn1.z, normal.y;
+
+	MOV tbn2.x, tangent.z;
+	MOV tbn2.y, prod.z;
+	MOV tbn2.z, normal.z;
 	
   //  vec3 ntex = texture2D(normTex, coord).rgb * 2.0 - 1.0;
   	TEMP ntex;
 	TEX ntex, v_tex, texture[4], 2D;
 	MAD ntex, ntex, 2.0, -1.0;
   //  normal = normalize(ntex * tbn);
-	DP3 normal.x, ntex, tbn2[0];
-	DP3 normal.y, ntex, tbn2[1];
-	DP3 normal.z, ntex, tbn2[2];
+	DP3 normal.x, ntex, tbn0;
+	DP3 normal.y, ntex, tbn1;
+	DP3 normal.z, ntex, tbn2;
 	
 	// Normalization.
 	TEMP length;
@@ -154,6 +156,12 @@ TEX tex, v_tex, texture[0], 2D;
   EX2 temp.y, temp.y;
   // TODO: why not just use POW here? (should test performance first)
   MUL specular.rgb, specular, temp.y;
+#endif
+
+#if USE_INSTANCING && USE_AO
+  TEMP ao;
+  TEX ao, v_texAO, texture[5], 2D;
+  ADD ao, ao, ao;
 #endif
 
 // color = (texdiffuse * sundiffuse + specular) * get_shadow() + texdiffuse * ambient;
@@ -201,18 +209,30 @@ TEX tex, v_tex, texture[0], 2D;
   #if USE_SPECULAR || USE_SPECULAR_MAP
     MAD color.rgb, texdiffuse, sundiffuse, specular;
     MUL temp.rgb, texdiffuse, ambient;
+    #if USE_INSTANCING && USE_AO
+      MUL temp.rgb, ao, temp;
+    #endif
     MAD color.rgb, color, shadow.x, temp;
   #else
     MAD temp.rgb, sundiffuse, shadow.x, ambient;
+    #if USE_INSTANCING && USE_AO
+      MUL temp.rgb, ao, temp;
+    #endif
     MUL color.rgb, texdiffuse, temp;
   #endif
   
 #else
   #if USE_SPECULAR || USE_SPECULAR_MAP
     MAD temp.rgb, fragment.color, 2.0, ambient;
+    #if USE_INSTANCING && USE_AO
+      MUL temp.rgb, ao, temp;
+    #endif
     MAD color.rgb, texdiffuse, temp, specular;
   #else
     MAD temp.rgb, fragment.color, 2.0, ambient;
+    #if USE_INSTANCING && USE_AO
+      MUL temp.rgb, ao, temp;
+    #endif
     MUL color.rgb, texdiffuse, temp;
   #endif
 #endif
