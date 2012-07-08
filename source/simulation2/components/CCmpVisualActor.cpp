@@ -618,7 +618,10 @@ void CCmpVisualActor::Interpolate(float frameTime, float frameOffset)
 	else
 	{
 		CmpPtr<ICmpRangeManager> cmpRangeManager(GetSimContext(), SYSTEM_ENTITY);
-		m_Visibility = cmpRangeManager->GetLosVisibility(GetEntityId(), GetSimContext().GetCurrentDisplayedPlayer());
+		//if (cmpVision->GetRetainInFog())
+		//	m_Visibility = ICmpRangeManager::VIS_VISIBLE;
+		//else
+			m_Visibility = cmpRangeManager->GetLosVisibility(GetEntityId(), GetSimContext().GetCurrentDisplayedPlayer());
 	}
 
 	// Even if HIDDEN due to LOS, we need to set up the transforms
