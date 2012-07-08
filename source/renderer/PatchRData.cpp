@@ -693,7 +693,7 @@ void CPatchRData::PrepareShader(const CShaderProgramPtr& shader, ShadowMap* shad
 	shader->Uniform("sunColor", lightEnv.m_SunColor);
 
 	CLOSTexture& los = g_Renderer.GetScene().GetLOSTexture();
-	shader->BindTexture("losTex", los.GetTexture());
+	shader->BindTexture("losTex", los.GetTextureSmooth());
 	shader->Uniform("losTransform", los.GetTextureMatrix()[0], los.GetTextureMatrix()[12], 0.f, 0.f);
 
 	shader->Uniform("ambient", lightEnv.m_TerrainAmbientColor);
