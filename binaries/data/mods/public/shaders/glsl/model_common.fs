@@ -171,9 +171,9 @@ void main()
 
   #if USE_NORMAL_MAP
     float sign = v_tangent.w;
-    mat3 tbn = transpose(mat3(v_tangent.xyz, v_bitangent * -sign, v_normal));
+    mat3 tbn = (mat3(v_tangent.xyz, v_bitangent * -sign, v_normal));
     vec3 ntex = texture2D(normTex, coord).rgb * 2.0 - 1.0;
-    normal = normalize(ntex * tbn);
+    normal = normalize(tbn * ntex);
     vec3 sundiffuse = max(dot(-sunDir, normal), 0.0) * sunColor;
   #else
     vec3 sundiffuse = v_lighting;
