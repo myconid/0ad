@@ -55,6 +55,14 @@ CLOSTexture::CLOSTexture(CSimulation2& simulation) :
 {
 	pglGenFramebuffersEXT(1, &m_smoothFbo);
 	m_smoothShader = g_Renderer.GetShaderManager().LoadEffect("los_interp");
+	
+	CShaderProgramPtr shader = m_smoothShader->GetShader();
+	
+	if (!m_smoothShader || !shader)
+	{
+		LOGERROR(L"Failed to load SmoothLOS shader, disabling.");
+		g_Renderer.m_Options.m_SmoothLOS = false;
+	}
 }
 
 CLOSTexture::~CLOSTexture()
