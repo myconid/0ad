@@ -30,7 +30,10 @@ void main()
 	vec3 reflColor, refrColor, specular;
 	float losMod;
 
-	n = normalize(texture2D(normalMap, gl_TexCoord[0].st).xzy - vec3(0.5, 0.5, 0.5));
+	//n = normalize(texture2D(normalMap, gl_TexCoord[0].st).xzy - vec3(0.5, 0.5, 0.5));
+	vec3 ww = mix(texture2D(normalMap, gl_TexCoord[0].st).xzy, texture2D(normalMap, gl_TexCoord[0].st * 1.33).xzy, 0.5);
+	n = normalize(ww - vec3(0.5, 0.5, 0.5));
+
 	l = -sunDir;
 	v = normalize(cameraPos - worldPos);
 	h = normalize(l + v);
