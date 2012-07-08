@@ -125,7 +125,7 @@ public:
 	 * preconditions  : PrepareForRendering must have been called this
 	 * frame before calling RenderWater.
 	 */
-	void RenderWater();
+	void RenderWater(const CShaderDefines& context, ShadowMap* shadow);
 
 	/**
 	 * Calculate a scissor rectangle for the visible water patches.
@@ -151,7 +151,7 @@ private:
 	 * RenderFancyWater: internal rendering method for fancy water.
 	 * Returns false if unable to render with fancy water.
 	 */
-	bool RenderFancyWater();
+	bool RenderFancyWater(const CShaderDefines& context, ShadowMap* shadow);
 
 	/**
 	 * RenderSimpleWater: internal rendering method for water

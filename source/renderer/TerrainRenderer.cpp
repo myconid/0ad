@@ -31,6 +31,7 @@
 #include "graphics/GameView.h"
 #include "graphics/Model.h"
 #include "graphics/ShaderManager.h"
+#include "renderer/ShadowMap.h"
 #include "graphics/TerritoryTexture.h"
 #include "graphics/TextRenderer.h"
 
@@ -665,14 +666,14 @@ CBoundingBoxAligned TerrainRenderer::ScissorWater(const CMatrix3D &viewproj)
 }
 
 // Render fancy water
-bool TerrainRenderer::RenderFancyWater()
+bool TerrainRenderer::RenderFancyWater(const CShaderDefines& context, ShadowMap* shadow)
 {
 	PROFILE3_GPU("fancy water");
 
 	// If we're using fancy water, make sure its shader is loaded
 	if (!m->fancyWaterShader)
 	{
-		m->fancyWaterShader = g_Renderer.GetShaderManager().LoadProgram("glsl/water_high", CShaderDefines());
+		m->fancyWaterShader = g_Renderer.GetShaderManager().LoadProgram("glsl/water_high", context);
 		if (!m->fancyWaterShader)
 		{
 			LOGERROR(L"Failed to load water shader. Falling back to non-fancy water.\n");
@@ -729,6 +730,15 @@ bool TerrainRenderer::RenderFancyWater()
 	m->fancyWaterShader->Uniform("refractionMatrix", WaterMgr->m_RefractionMatrix);
 	m->fancyWaterShader->Uniform("losMatrix", losTexture.GetTextureMatrix());
 	m->fancyWaterShader->Uniform("cameraPos", camPos);
+	
+	if (shadow)
+	{
+		m->fancyWaterShader->BindTexture("shadowTex", shadow->GetTexture());
+		m->fancyWaterShader->Uniform("shadowTransform", shadow->GetTextureMatrix());
+		int width = shadow->GetWidth();
+		int height = shadow->GetHeight();
+		m->fancyWaterShader->Uniform("shadowScale", width, height, 1.0f / width, 1.0f / height);
+	}
 
 	for (size_t i = 0; i < m->visiblePatches.size(); ++i)
 	{
@@ -851,11 +861,11 @@ void TerrainRenderer::RenderSimpleWater()
 
 ///////////////////////////////////////////////////////////////////
 // Render water that is part of the terrain
-void TerrainRenderer::RenderWater()
+void TerrainRenderer::RenderWater(const CShaderDefines& context, ShadowMap* shadow)
 {
 	WaterManager* WaterMgr = g_Renderer.GetWaterManager();
 
-	if (!WaterMgr->WillRenderFancyWater() || !RenderFancyWater())
+	if (!WaterMgr->WillRenderFancyWater() || !RenderFancyWater(context, shadow))
 		RenderSimpleWater();
 }
 
