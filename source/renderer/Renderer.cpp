@@ -1449,7 +1449,7 @@ void CRenderer::RenderSubmissions()
 		RenderTransparentModels(context, TRANSPARENT_OPAQUE);
 		ogl_WarnIfError();
 
-		m->terrainRenderer.RenderWater();
+		m->terrainRenderer.RenderWater(context, &m->shadow);
 		ogl_WarnIfError();
 
 		// render transparent stuff again, but only the blended parts that overlap water
