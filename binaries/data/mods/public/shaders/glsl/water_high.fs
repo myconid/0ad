@@ -96,8 +96,12 @@ void main()
 
 	losMod = texture2D(losMap, gl_TexCoord[3].st).a;
 
+#if USE_SHADOW
 	float shadow = get_shadow();
 	float fresShadow = mix(fresnel, fresnel*shadow, 0.2);
+#else
+	float fresShadow = fresnel;
+#endif
 	
 	vec3 colour = mix(refrColor + 0.3*specular, reflColor + specular, fresShadow);
 
