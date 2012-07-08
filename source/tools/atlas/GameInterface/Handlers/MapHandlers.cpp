@@ -28,6 +28,10 @@
 #include "graphics/Terrain.h"
 #include "graphics/TerrainTextureEntry.h"
 #include "graphics/TerrainTextureManager.h"
+#include "lib/tex/tex.h"
+#include "lib/file/file.h"
+#include "ps/CLogger.h"
+#include "ps/Filesystem.h"
 #include "ps/Game.h"
 #include "ps/Loader.h"
 #include "ps/World.h"
@@ -133,6 +137,70 @@ MESSAGEHANDLER(LoadMap)
 
 	StartGame(attrs);
 }
+
+MESSAGEHANDLER(ImportHeightmap)
+{
+	CStrW src = *msg->filename;
+	
+	size_t fileSize;
+	shared_ptr<u8> fileData;
+	
+	File file;
+	
+	if (file.Open(src, O_RDONLY) < 0)
+	{
+		LOGERROR(L"Failed to load heightmap.");
+		return;
+	}
+	
+	fileSize = lseek(file.Descriptor(), 0, SEEK_END);
+	lseek(file.Descriptor(), 0, SEEK_SET);
+	
+	fileData = shared_ptr<u8>(new u8[fileSize]);
+	
+	read(file.Descriptor(), fileData.get(), fileSize);
+	
+	file.Close();
+
+	Tex tex;
+	if (tex_decode(fileData, fileSize, &tex) < 0)
+	{
+		LOGERROR(L"Failed to decode heightmap.");
+		return;
+	}
+
+	// Convert to uncompressed BGRA with no mipmaps
+	if (tex_transform_to(&tex, (tex.flags | TEX_BGR | TEX_ALPHA) & ~(TEX_DXT | TEX_MIPMAPS)) < 0)
+	{
+		LOGERROR(L"Failed to transform heightmap.");
+		tex_free(&tex);
+		return;
+	}
+
+	
+	u16* heightmap = g_Game->GetWorld()->GetTerrain()->GetHeightMap();
+	ssize_t hmSize = g_Game->GetWorld()->GetTerrain()->GetVerticesPerSide();
+	
+	ssize_t edgeH = std::min(hmSize, (ssize_t)tex.h);
+	ssize_t edgeW = std::min(hmSize, (ssize_t)tex.w);
+	
+	
+	u8* mapdata = tex_get_data(&tex);
+	ssize_t bytesPP = tex.bpp / 8;
+	ssize_t mapLineSkip = tex.w * bytesPP;
+	
+	for (ssize_t y = 0; y < edgeH; ++y)
+	{
+		for (ssize_t x = 0; x < edgeW; ++x)
+		{
+			heightmap[y * hmSize + x] = mapdata[y * mapLineSkip + x * bytesPP] * 256;
+		}
+	}
+	
+	tex_free(&tex);
+	
+}
+
 
 MESSAGEHANDLER(SaveMap)
 {
