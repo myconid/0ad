@@ -13,70 +13,60 @@
 	<pass shader="glsl/terrain_base">
 		<blend src="src_alpha" dst="one_minus_src_alpha"/>
 		<depth func="lequal"/>
-		<alpha func="greater" ref="0.2"/>
 		<define name="LAYER" value="1"/>
 		<define name="USE_GRASS" value="1"/>
 	</pass>
 	<pass shader="glsl/terrain_base">
 		<blend src="src_alpha" dst="one_minus_src_alpha"/>
 		<depth func="lequal"/>
-		<alpha func="greater" ref="0.2"/>
 		<define name="LAYER" value="2"/>
 		<define name="USE_GRASS" value="1"/>
 	</pass>
 	<pass shader="glsl/terrain_base">
 		<blend src="src_alpha" dst="one_minus_src_alpha"/>
 		<depth func="lequal"/>
-		<alpha func="greater" ref="0.2"/>
 		<define name="LAYER" value="3"/>
 		<define name="USE_GRASS" value="1"/>
 	</pass>
 	<pass shader="glsl/terrain_base">
 		<blend src="src_alpha" dst="one_minus_src_alpha"/>
 		<depth func="lequal"/>
-		<alpha func="greater" ref="0.2"/>
 		<define name="LAYER" value="4"/>
 		<define name="USE_GRASS" value="1"/>
 	</pass>
 	<pass shader="glsl/terrain_base">
 		<blend src="src_alpha" dst="one_minus_src_alpha"/>
 		<depth func="lequal"/>
-		<alpha func="greater" ref="0.2"/>
 		<define name="LAYER" value="5"/>
 		<define name="USE_GRASS" value="1"/>
 	</pass>
 	<pass shader="glsl/terrain_base">
 		<blend src="src_alpha" dst="one_minus_src_alpha"/>
 		<depth func="lequal"/>
-		<alpha func="greater" ref="0.2"/>
 		<define name="LAYER" value="6"/>
 		<define name="USE_GRASS" value="1"/>
 	</pass>
 	<pass shader="glsl/terrain_base">
 		<blend src="src_alpha" dst="one_minus_src_alpha"/>
 		<depth func="lequal"/>
-		<alpha func="greater" ref="0.2"/>
 		<define name="LAYER" value="7"/>
 		<define name="USE_GRASS" value="1"/>
 	</pass>
 	<pass shader="glsl/terrain_base">
 		<blend src="src_alpha" dst="one_minus_src_alpha"/>
 		<depth func="lequal"/>
-		<alpha func="greater" ref="0.2"/>
 		<define name="LAYER" value="8"/>
 		<define name="USE_GRASS" value="1"/>
 	</pass>
 	<pass shader="glsl/terrain_base">
 		<blend src="src_alpha" dst="one_minus_src_alpha"/>
 		<depth func="lequal"/>
-		<alpha func="greater" ref="0.2"/>
 		<define name="LAYER" value="9"/>
 		<define name="USE_GRASS" value="1"/>
 	</pass>
 	<pass shader="glsl/terrain_base">
 		<blend src="src_alpha" dst="one_minus_src_alpha"/>
 		<depth func="lequal"/>
-		<alpha func="greater" ref="0.2"/>
 		<define name="LAYER" value="10"/>
 		<define name="USE_GRASS" value="1"/>
 	</pass>
