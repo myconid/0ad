@@ -87,9 +87,10 @@ void main()
   #else
   #if USE_INSTANCING
     vec4 position = instancingTransform * vec4(a_vertex, 1.0);
-    vec3 normal = mat3(instancingTransform) * a_normal;
+    mat3 normalMatrix = mat3(instancingTransform[0].xyz, instancingTransform[1].xyz, instancingTransform[2].xyz);
+    vec3 normal = normalMatrix * a_normal;
     #if (USE_NORMAL_MAP || USE_PARALLAX_MAP)
-      vec4 tangent = vec4(mat3(instancingTransform) * a_tangent.xyz, a_tangent.w);
+      vec4 tangent = vec4(normalMatrix * a_tangent.xyz, a_tangent.w);
     #endif
   #else
     vec4 position = vec4(a_vertex, 1.0);
