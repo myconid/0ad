@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <terrain>
         <textures>
-                <texture name="baseTex" file="snow grass 2.dds"/>
-		<texture name="normTex" file="snow grass 2_norm.png"/>
-		<texture name="specTex" file="snow grass 2_spec.png"/>
-        </textures>
+                <texture name="baseTex" file="types/snow grass 2.dds"/>
+		<texture name="normTex" file="types/snow grass 2_norm.png"/>
+		<texture name="specTex" file="types/snow grass 2_spec.png"/>
+        <texture name="blendTex" file="alphamaps/blendtex.png"/></textures>
         <material>terrain_norm.xml</material>
 </terrain>

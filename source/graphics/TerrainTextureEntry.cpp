@@ -93,7 +93,7 @@ CTerrainTextureEntry::CTerrainTextureEntry(CTerrainPropertiesPtr properties, con
 				XERO_ITER_ATTR(textures_element, se)
 				{
 					if (se.Name == at_file)
-						path = VfsPath("art/textures/terrain/types") / se.Value.FromUTF8();
+						path = VfsPath("art/textures/terrain") / se.Value.FromUTF8();
 					else if (se.Name == at_name)
 						name = se.Value;
 				}
