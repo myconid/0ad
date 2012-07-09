@@ -185,9 +185,9 @@ MESSAGEHANDLER(ImportHeightmap)
 		return;
 	}
 
-	// pick smallest side of texture, round up to power of two size
+	// pick smallest side of texture; truncate if not divisible by PATCH_SIZE
 	ssize_t terrainSize = std::min(tex.w, tex.h);
-	terrainSize = round_up_to_pow2(terrainSize);
+	terrainSize -= terrainSize % PATCH_SIZE;
 	
 	// resize terrain to heightmap size
 	CTerrain* terrain = g_Game->GetWorld()->GetTerrain();
