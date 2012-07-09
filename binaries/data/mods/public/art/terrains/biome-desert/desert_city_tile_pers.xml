@@ -1,1 +1,1 @@
-<?xml version="1.0" encoding="utf-8"?> <terrain> <textures> <texture name="baseTex" file="desert_city_tile_pers.png"/> </textures> <material>terrain_base.xml</material> </terrain>
+<?xml version="1.0" encoding="utf-8"?> <terrain> <textures> <texture name="baseTex" file="types/desert_city_tile_pers.png"/> <texture name="blendTex" file="alphamaps/blendtex.png"/></textures> <material>terrain_base.xml</material> </terrain>
