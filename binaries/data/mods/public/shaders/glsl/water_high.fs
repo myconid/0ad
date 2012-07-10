@@ -33,26 +33,26 @@ varying float waterDepth;
 varying vec4 v_shadow;
 
 
-float get_shadow()
+float get_shadow(vec4 coords)
 {
   #if USE_SHADOW && !DISABLE_RECEIVE_SHADOWS
     #if USE_SHADOW_SAMPLER
       #if USE_SHADOW_PCF
-        vec2 offset = fract(v_shadow.xy - 0.5);
+        vec2 offset = fract(coords.xy - 0.5);
         vec4 size = vec4(offset + 1.0, 2.0 - offset);
-        vec4 weight = (vec4(2.0 - 1.0 / size.xy, 1.0 / size.zw - 1.0) + (v_shadow.xy - offset).xyxy) * shadowScale.zwzw;
+        vec4 weight = (vec4(2.0 - 1.0 / size.xy, 1.0 / size.zw - 1.0) + (coords.xy - offset).xyxy) * shadowScale.zwzw;
         return (1.0/9.0)*dot(size.zxzx*size.wwyy,
-          vec4(shadow2D(shadowTex, vec3(weight.zw, v_shadow.z)).r,
-               shadow2D(shadowTex, vec3(weight.xw, v_shadow.z)).r,
-               shadow2D(shadowTex, vec3(weight.zy, v_shadow.z)).r,
-               shadow2D(shadowTex, vec3(weight.xy, v_shadow.z)).r));
+          vec4(shadow2D(shadowTex, vec3(weight.zw, coords.z)).r,
+               shadow2D(shadowTex, vec3(weight.xw, coords.z)).r,
+               shadow2D(shadowTex, vec3(weight.zy, coords.z)).r,
+               shadow2D(shadowTex, vec3(weight.xy, coords.z)).r));
       #else
-        return shadow2D(shadowTex, v_shadow.xyz).r;
+        return shadow2D(shadowTex, coords.xyz).r;
       #endif
     #else
-      if (v_shadow.z >= 1.0)
+      if (coords.z >= 1.0)
         return 1.0;
-      return (v_shadow.z <= texture2D(shadowTex, v_shadow.xy).x ? 1.0 : 0.0);
+      return (coords.z <= texture2D(shadowTex, coords.xy).x ? 1.0 : 0.0);
     #endif
   #else
     return 1.0;
@@ -70,7 +70,7 @@ void main()
 	vec3 reflColor, refrColor, specular;
 	float losMod;
 
-	vec3 ww = mix(texture2D(normalMap, gl_TexCoord[0].st).xzy, texture2D(normalMap, gl_TexCoord[0].st * 1.33).xzy, 0.5);
+	vec3 ww = mix(texture2D(normalMap, gl_TexCoord[0].st).xzy, texture2D(normalMap, gl_TexCoord[0].st * 1.3).xzy, 0.5);
 	n = normalize(ww - vec3(0.5, 0.5, 0.5));
 
 	l = -sunDir;
@@ -97,8 +97,8 @@ void main()
 	losMod = texture2D(losMap, gl_TexCoord[3].st).a;
 
 #if USE_SHADOW
-	float shadow = get_shadow();
-	float fresShadow = mix(fresnel, fresnel*shadow, 0.2);
+	float shadow = get_shadow(vec4(v_shadow.xy - 8*waviness*n.xz, v_shadow.zw));
+	float fresShadow = mix(fresnel, fresnel*shadow, dot(sunColor, vec3(0.16666)));
 #else
 	float fresShadow = fresnel;
 #endif
