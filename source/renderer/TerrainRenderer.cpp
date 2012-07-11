@@ -681,6 +681,25 @@ bool TerrainRenderer::RenderFancyWater(const CShaderDefines& context, ShadowMap*
 			return false;
 		}
 	}
+	
+	
+	
+	GLuint depthTex;
+	glGenTextures(1, (GLuint*)&depthTex);
+	glBindTexture(GL_TEXTURE_2D, depthTex);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, g_Renderer.GetWidth(), g_Renderer.GetHeight(),
+		      0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE,NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	
+	glCopyTexImage2D(GL_TEXTURE_2D,0,GL_DEPTH_COMPONENT, 0, 0, g_Renderer.GetWidth(), g_Renderer.GetHeight(), 0);
+	
+	glBindTexture(GL_TEXTURE_2D, 0);
+	
+		
 
 	WaterManager* WaterMgr = g_Renderer.GetWaterManager();
 	CLOSTexture& losTexture = g_Renderer.GetScene().GetLOSTexture();
@@ -714,6 +733,10 @@ bool TerrainRenderer::RenderFancyWater(const CShaderDefines& context, ShadowMap*
 	m->fancyWaterShader->BindTexture("refractionMap", WaterMgr->m_RefractionTexture);
 
 	m->fancyWaterShader->BindTexture("losMap", losTexture.GetTextureSmooth());
+	
+
+	m->fancyWaterShader->BindTexture("depthTex", depthTex);
+	
 
 	const CLightEnv& lightEnv = g_Renderer.GetLightEnv();
 	m->fancyWaterShader->Uniform("ambient", lightEnv.m_TerrainAmbientColor);
@@ -754,6 +777,8 @@ bool TerrainRenderer::RenderFancyWater(const CShaderDefines& context, ShadowMap*
 	m->fancyWaterShader->Unbind();
 
 	pglActiveTextureARB(GL_TEXTURE0);
+	
+	glDeleteTextures(1, &depthTex);
 
 	glDisable(GL_BLEND);
 

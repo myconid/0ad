@@ -8,6 +8,7 @@ uniform sampler2D normalMap;
 uniform sampler2D normalMap2;
 uniform sampler2D reflectionMap;
 uniform sampler2D refractionMap;
+uniform sampler2D depthTex;
 uniform sampler2D losMap;
 uniform float shininess;		// Blinn-Phong specular strength
 uniform float specularStrength;	// Scaling for specular reflection (specular color is (this,this,this))
@@ -88,6 +89,16 @@ void main()
 	ndotl = dot(n, l);
 	ndoth = dot(n, h);
 	ndotv = dot(n, v);
+
+	// Don't change these two. They should match the values in the config (TODO: dec uniforms).
+	float zNear = 2.0;
+	float zFar = 4096.0;
+
+	float z_b = texture2D(depthTex, gl_FragCoord.xy).x;
+	float z_n = 2.0 * z_b - 1.0;
+	float waterDepth2 = 2.0 * zNear * zFar / (zFar + zNear - z_n * (zFar - zNear));
+
+	waterDepth2 = gl_FragCoord.z / waterDepth2;
 	
 	fresnel = pow(1.0 - ndotv, 0.8);	// A rather random Fresnel approximation
 	
@@ -98,7 +109,7 @@ void main()
 					reflectionTintStrength);
 	
 	refrColor = (0.5 + 0.5*ndotl) * mix(texture2D(refractionMap, refrCoords).rgb, sunColor * tint,
-					murkiness * clamp(waterDepth / fullDepth, 0.0, 1.0)); // Murkiness and tint at this pixel (tweaked based on lighting and depth)
+					murkiness * clamp(waterDepth2 / fullDepth, 0.0, 1.0)); // Murkiness and tint at this pixel (tweaked based on lighting and depth)
 	
 	specular = pow(max(0.0, ndoth), shininess) * sunColor * specularStrength;
 
