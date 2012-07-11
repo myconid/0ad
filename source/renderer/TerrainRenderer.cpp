@@ -687,7 +687,7 @@ bool TerrainRenderer::RenderFancyWater(const CShaderDefines& context, ShadowMap*
 	GLuint depthTex;
 	glGenTextures(1, (GLuint*)&depthTex);
 	glBindTexture(GL_TEXTURE_2D, depthTex);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT24, g_Renderer.GetWidth(), g_Renderer.GetHeight(),
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT32, g_Renderer.GetWidth(), g_Renderer.GetHeight(),
 		      0, GL_DEPTH_COMPONENT, GL_UNSIGNED_BYTE,NULL);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_COMPARE_MODE, GL_NONE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -758,6 +758,8 @@ bool TerrainRenderer::RenderFancyWater(const CShaderDefines& context, ShadowMap*
 	m->fancyWaterShader->Uniform("cameraPos", camPos);
 	
 	m->fancyWaterShader->Uniform("time", (float)time);
+	
+	m->fancyWaterShader->Uniform("screenSize", (float)g_Renderer.GetWidth(), (float)g_Renderer.GetHeight(), 0.0f, 0.0f);
 	
 	if (shadow)
 	{

@@ -19,6 +19,8 @@ uniform float fullDepth;		// Depth at which to use full murkiness (shallower wat
 uniform vec3 reflectionTint;	// Tint for reflection (used for really muddy water)
 uniform float reflectionTintStrength;	// Strength of reflection tint (how much of it to mix in)
 
+uniform vec2 screenSize;
+
 uniform float time;
 
 #if USE_SHADOW
@@ -94,11 +96,11 @@ void main()
 	float zNear = 2.0;
 	float zFar = 4096.0;
 
-	float z_b = texture2D(depthTex, gl_FragCoord.xy).x;
+	float z_b = texture2D(depthTex, gl_FragCoord.xy / screenSize).x;
 	float z_n = 2.0 * z_b - 1.0;
 	float waterDepth2 = 2.0 * zNear * zFar / (zFar + zNear - z_n * (zFar - zNear));
 
-	waterDepth2 = gl_FragCoord.z / waterDepth2;
+	waterDepth2 = abs(worldPos.z - waterDepth2);
 	
 	fresnel = pow(1.0 - ndotv, 0.8);	// A rather random Fresnel approximation
 	
@@ -109,7 +111,7 @@ void main()
 					reflectionTintStrength);
 	
 	refrColor = (0.5 + 0.5*ndotl) * mix(texture2D(refractionMap, refrCoords).rgb, sunColor * tint,
-					murkiness * clamp(waterDepth2 / fullDepth, 0.0, 1.0)); // Murkiness and tint at this pixel (tweaked based on lighting and depth)
+					murkiness * clamp(waterDepth / fullDepth, 0.0, 1.0)); // Murkiness and tint at this pixel (tweaked based on lighting and depth)
 	
 	specular = pow(max(0.0, ndoth), shininess) * sunColor * specularStrength;
 
@@ -130,4 +132,6 @@ void main()
 	// become opaque faster at lower view angles so we can't look "underneath" the water plane)
 	t = 18.0 * max(0.0, 0.7 - v.y);
 	gl_FragColor.a = 0.15 * waterDepth * (1.2 + t + fresnel);
+
+	//gl_FragColor = vec4((texture2D(depthTex, gl_FragCoord.xy / screenSize).rrr - 0.95) * 20, 1.0);
 }
