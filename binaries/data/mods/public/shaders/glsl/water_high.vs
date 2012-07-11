@@ -7,6 +7,8 @@ uniform mat4 shadowTransform;
 uniform float repeatScale;
 uniform vec2 translation;
 
+uniform float time;
+
 #if USE_SHADOW_SAMPLER && USE_SHADOW_PCF
   uniform vec4 shadowScale;
 #endif

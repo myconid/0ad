@@ -691,12 +691,15 @@ bool TerrainRenderer::RenderFancyWater(const CShaderDefines& context, ShadowMap*
 	glDepthFunc(GL_LEQUAL);
 
 	double time = WaterMgr->m_WaterTexTimer;
-	double period = 1.6;
+	double period = 8;
 	int curTex = (int)(time*60/period) % 60;
+	int nexTex = (curTex + 1) % 60;
 
 	m->fancyWaterShader->Bind();
 
 	m->fancyWaterShader->BindTexture("normalMap", WaterMgr->m_NormalMap[curTex]);
+	m->fancyWaterShader->BindTexture("normalMap2", WaterMgr->m_NormalMap[nexTex]);
+	
 
 	// Shift the texture coordinates by these amounts to make the water "flow"
 	float tx = -fmod(time, 81.0)/81.0;
@@ -730,6 +733,8 @@ bool TerrainRenderer::RenderFancyWater(const CShaderDefines& context, ShadowMap*
 	m->fancyWaterShader->Uniform("refractionMatrix", WaterMgr->m_RefractionMatrix);
 	m->fancyWaterShader->Uniform("losMatrix", losTexture.GetTextureMatrix());
 	m->fancyWaterShader->Uniform("cameraPos", camPos);
+	
+	m->fancyWaterShader->Uniform("time", (float)time);
 	
 	if (shadow)
 	{

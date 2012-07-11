@@ -5,6 +5,7 @@ uniform vec3 sunDir;
 uniform vec3 sunColor;
 uniform vec3 cameraPos;
 uniform sampler2D normalMap;
+uniform sampler2D normalMap2;
 uniform sampler2D reflectionMap;
 uniform sampler2D refractionMap;
 uniform sampler2D losMap;
@@ -16,6 +17,8 @@ uniform float murkiness;		// Amount of tint to blend in with the refracted colou
 uniform float fullDepth;		// Depth at which to use full murkiness (shallower water will be clearer)
 uniform vec3 reflectionTint;	// Tint for reflection (used for really muddy water)
 uniform float reflectionTintStrength;	// Strength of reflection tint (how much of it to mix in)
+
+uniform float time;
 
 #if USE_SHADOW
   #if USE_SHADOW_SAMPLER
@@ -70,7 +73,12 @@ void main()
 	vec3 reflColor, refrColor, specular;
 	float losMod;
 
-	vec3 ww = mix(texture2D(normalMap, gl_TexCoord[0].st).xzy, texture2D(normalMap, gl_TexCoord[0].st * 1.3).xzy, 0.5);
+	//vec3 ww = mix(texture2D(normalMap, gl_TexCoord[0].st).xzy, texture2D(normalMap, gl_TexCoord[0].st * 1.3).xzy, 0.5);
+
+	vec3 ww = texture2D(normalMap, gl_TexCoord[0].st).xzy;
+	vec3 ww2 = texture2D(normalMap2, gl_TexCoord[0].st).xzy;
+	ww = mix(ww, ww2, mod(time * 60, 8.0) / 8.0);
+	//ww = time.xxx;
 	n = normalize(ww - vec3(0.5, 0.5, 0.5));
 
 	l = -sunDir;
