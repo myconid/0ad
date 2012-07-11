@@ -111,7 +111,7 @@ void main()
 					reflectionTintStrength);
 	
 	refrColor = (0.5 + 0.5*ndotl) * mix(texture2D(refractionMap, refrCoords).rgb, sunColor * tint,
-					murkiness * clamp(waterDepth / fullDepth, 0.0, 1.0)); // Murkiness and tint at this pixel (tweaked based on lighting and depth)
+					murkiness * clamp(waterDepth2 / fullDepth, 0.0, 1.0)); // Murkiness and tint at this pixel (tweaked based on lighting and depth)
 	
 	specular = pow(max(0.0, ndoth), shininess) * sunColor * specularStrength;
 
