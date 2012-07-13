@@ -665,14 +665,22 @@ void ShaderModelRenderer::Render(const RenderModifierPtr& modifier, const CShade
 						
 						for (size_t q = 0; q < renderQueries.GetSize(); q++)
 						{
-							CStrIntern str = renderQueries.GetItem(q);
-							if (str == g_Renderer.GetShaderManager().QueryTime)
+							CShaderRenderQueries::RenderQuery rq = renderQueries.GetItem(q);
+							//if (str == g_Renderer.GetShaderManager().QueryTime)
+							if (rq.first == RQUERY_TIME)
 							{
-								double time = g_Renderer.GetTimeManager().GetGlobalTime();
-								renderQueries.Set(str, CVector4D(time,0,0,0));
+								
+								//renderQueries.Set(str, (float)time, 0.0f, 0.0f, 0.0f);
+								//shader->Uniform(rq.second, CVector3D(time,0,0));
+								CShaderProgram::Binding binding = shader->GetUniformBinding(rq.second);
+								if (binding.Active())
+								{
+									double time = g_Renderer.GetTimeManager().GetGlobalTime();
+									shader->Uniform(binding, time, 0,0,0);
+								}
 							}
 						}
-						renderQueries.BindUniforms(shader);
+						//renderQueries.BindUniforms(shader);
 
 						modifier->PrepareModel(shader, model);
 

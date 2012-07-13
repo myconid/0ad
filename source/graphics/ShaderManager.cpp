@@ -62,7 +62,7 @@ CShaderManager::CShaderManager()
 	
 	//CShaderRenderQueries rq;
 	
-	QueryTime = CStrIntern("time");
+	//QueryTime = CStrIntern("time");
 }
 
 CShaderManager::~CShaderManager()
