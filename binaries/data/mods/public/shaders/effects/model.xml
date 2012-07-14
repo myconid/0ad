@@ -50,7 +50,20 @@
 
     <technique>
         <require shaders="glsl"/>
-        <pass shader="glsl/model_common"/>
+	<require context="USE_PARALLAX_MAP"/>
+        <pass shader="glsl/model_common">
+		<max_draw_dist value="120"/>
+		<define name="USE_PARALLAX_MAP" value="1"/>
+	</pass>
+	<pass shader="glsl/model_common">
+		<min_draw_dist value="120"/>
+		<define name="USE_PARALLAX_MAP" value="0"/>
+	</pass>
+    </technique>
+    
+    <technique>
+        <require shaders="glsl"/>
+	<pass shader="glsl/model_common"/>
     </technique>
 
     <technique>

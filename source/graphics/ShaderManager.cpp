@@ -400,6 +400,8 @@ bool CShaderManager::NewEffect(const char* name, const CShaderDefines& baseDefin
 	EL(pass);
 	EL(require);
 	EL(sort_by_distance);
+	EL(min_draw_dist);
+	EL(max_draw_dist);
 	AT(context);
 	AT(dst);
 	AT(func);
@@ -525,6 +527,16 @@ bool CShaderManager::NewEffect(const char* name, const CShaderDefines& baseDefin
 
 					if (!Element.GetAttributes().GetNamedItem(at_mask).empty())
 						pass.DepthMask(Element.GetAttributes().GetNamedItem(at_mask) == "true" ? 1 : 0);
+				}
+				else if (Element.GetNodeName() == el_min_draw_dist)
+				{
+					float v = Element.GetAttributes().GetNamedItem(at_value).ToFloat();
+					pass.SetMinDrawDistance(v);
+				}
+				else if (Element.GetNodeName() == el_max_draw_dist)
+				{
+					float v = Element.GetAttributes().GetNamedItem(at_value).ToFloat();
+					pass.SetMaxDrawDistance(v);
 				}
 			}
 

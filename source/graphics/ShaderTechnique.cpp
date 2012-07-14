@@ -20,7 +20,8 @@
 #include "ShaderTechnique.h"
 
 CShaderPass::CShaderPass() :
-	m_HasAlpha(false), m_HasBlend(false), m_HasColorMask(false), m_HasDepthMask(false), m_HasDepthFunc(false)
+	m_HasAlpha(false), m_HasBlend(false), m_HasColorMask(false), m_HasDepthMask(false), m_HasDepthFunc(false),
+	m_MinDrawDistance(-1), m_MaxDrawDistance(-1)
 {
 }
 
@@ -159,4 +160,9 @@ void CShaderTechnique::Reset()
 {
 	m_SortByDistance = false;
 	m_Passes.clear();
+}
+
+CShaderPass& CShaderTechnique::GetPass(int pass)
+{
+	return m_Passes[pass];
 }

@@ -52,6 +52,12 @@ public:
 	void Unbind();
 
 	const CShaderProgramPtr& GetShader() const { return m_Shader; }
+	
+	float GetMinDrawDistance() { return m_MinDrawDistance; }
+	float GetMaxDrawDistance() { return m_MaxDrawDistance; }
+	
+	void SetMinDrawDistance(float f) { m_MinDrawDistance = f; }
+	void SetMaxDrawDistance(float f) { m_MaxDrawDistance = f; }
 
 private:
 	CShaderProgramPtr m_Shader;
@@ -75,6 +81,9 @@ private:
 
 	bool m_HasDepthFunc;
 	GLenum m_DepthFunc;
+	
+	float m_MinDrawDistance;
+	float m_MaxDrawDistance;
 };
 
 /**
@@ -102,6 +111,8 @@ public:
 	void SetSortByDistance(bool enable);
 
 	void Reset();
+	
+	CShaderPass& GetPass(int pass = 0);
 
 private:
 	std::vector<CShaderPass> m_Passes;

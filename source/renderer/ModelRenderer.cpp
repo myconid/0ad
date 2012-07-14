@@ -576,6 +576,8 @@ void ShaderModelRenderer::Render(const RenderModifierPtr& modifier, const CShade
 			for (int pass = 0; pass < currentTech->GetNumPasses(); ++pass)
 			{
 				currentTech->BeginPass(pass);
+				
+				CShaderPass &shaderpass = currentTech->GetPass(pass);
 
 				const CShaderProgramPtr& shader = currentTech->GetShader(pass);
 				int streamflags = shader->GetStreamFlags();
@@ -604,6 +606,16 @@ void ShaderModelRenderer::Render(const RenderModifierPtr& modifier, const CShade
 
 						if (flags && !(model->GetFlags() & flags))
 							continue;
+						
+						CVector3D modelpos = model->GetTransform().GetTranslation();
+						float dist = worldToCam.Transform(modelpos).Z;
+						float mindist = shaderpass.GetMinDrawDistance();
+						float maxdist = shaderpass.GetMaxDrawDistance();
+						
+						if (!((mindist < 0 || dist >= mindist) && (maxdist < 0 || dist < maxdist)))
+							continue;
+							
+						
 
 						CMaterial::SamplersVector samplers = model->GetMaterial().GetSamplers();
 						size_t samplersNum = samplers.size();
