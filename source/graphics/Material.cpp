@@ -37,6 +37,11 @@ void CMaterial::AddShaderDefine(const char* key, const char* value)
 	m_ShaderDefines.Add(key, value);
 }
 
+void CMaterial::AddConditionalDefine(const char* defname, const char* defvalue, int type, std::vector<float> &args)
+{
+	m_ConditionalDefines.Add(defname, defvalue, type, args);
+}
+
 void CMaterial::AddStaticUniform(const char* key, const CVector4D& value)
 {
 	m_StaticUniforms.Add(key, value);

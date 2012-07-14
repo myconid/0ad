@@ -314,7 +314,7 @@ struct SMRMaterialBucketKey
 		: effect(effect), defines(defines) { }
 
 	CStrIntern effect;
-	const CShaderDefines& defines;
+	CShaderDefines defines;
 
 	bool operator==(const SMRMaterialBucketKey& b) const
 	{
@@ -424,8 +424,33 @@ void ShaderModelRenderer::Render(const RenderModifierPtr& modifier, const CShade
 		for (size_t i = 0; i < m->submissions.size(); ++i)
 		{
 			CModel* model = m->submissions[i];
+			
+			CShaderDefines defs = model->GetMaterial().GetShaderDefines();
+			CShaderConditionalDefines condefs = model->GetMaterial().GetConditionalDefines();
+			
+			for (size_t j = 0; j < condefs.GetSize(); ++j)
+			{
+				CShaderConditionalDefines::CondDefine &item = condefs.GetItem(j);
+				int type = item.m_CondType;
+				switch (type)
+				{
+					case DCOND_DISTANCE:
+					{
+						CVector3D modelpos = model->GetTransform().GetTranslation();
+						float dist = worldToCam.Transform(modelpos).Z;
+						
+						float dmin = item.m_CondArgs[0];
+						float dmax = item.m_CondArgs[1];
+						
+						if ((dmin < 0 || dist >= dmin) && (dmax < 0 || dist < dmax))
+							defs.Add(item.m_DefName.c_str(), item.m_DefValue.c_str());
+						
+						break;
+					}
+				}
+			}
 
-			SMRMaterialBucketKey key(model->GetMaterial().GetShaderEffect(), model->GetMaterial().GetShaderDefines());
+			SMRMaterialBucketKey key(model->GetMaterial().GetShaderEffect(), defs);
 			std::vector<CModel*>& bucketItems = materialBuckets[key];
 			bucketItems.push_back(model);
 		}
