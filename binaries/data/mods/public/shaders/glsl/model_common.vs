@@ -22,9 +22,7 @@ uniform mat4 instancingTransform;
   uniform vec4 shadowScale;
 #endif
 
-#if !USE_NORMAL_MAP
-   varying vec3 v_lighting;
-#endif
+varying vec3 v_lighting;
 varying vec2 v_tex;
 varying vec4 v_shadow;
 varying vec2 v_los;
@@ -154,9 +152,7 @@ void main()
     #endif
   #endif
 
-  #if !USE_NORMAL_MAP
-    v_lighting = max(0.0, dot(normal, -sunDir)) * sunColor;
-  #endif
+  v_lighting = max(0.0, dot(normal, -sunDir)) * sunColor;
 
   v_tex = a_uv0;
 
