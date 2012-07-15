@@ -88,52 +88,61 @@ float get_shadow()
 
 void main()
 {
-
   vec2 coord = v_tex;
 
   #if USE_PARALLAX_MAP
   {
     float h = texture2D(normTex, coord).a;
     float sign = v_tangent.w;
-    mat3 tbn = transpose(mat3(v_tangent.xyz, v_bitangent * sign, v_normal));
+    mat3 tbn = mat3(v_tangent.xyz, v_bitangent * sign, v_normal);
 
-    vec3 eyeDir = normalize(tbn * v_eyeVec);
+    vec3 eyeDir = normalize(v_eyeVec * tbn);
     float dist = length(v_eyeVec);
 
-    if (dist < 100 && h < 0.99)
-    {
-      //float scale = 0.0075;
-      float scale = effectSettings.z;
+    float s;
+    vec2 move;
+    float height = 1.0;
+    float scale = effectSettings.z;
+      
+    scale = (scale * (PARALLAX_DIST_MAX - dist)) / PARALLAX_DIST_MAX;
 
-      if (dist > 65)
-      {
-        scale = scale * (100 - dist) / 35.0;
-      }
+    float iter = 8.0;
+    #if USE_HQ_PARALLAX
+      iter = 16.0;
+    #endif
 
-      float height = 1.0;
-      float iter;
+    s = 1.0 / iter;
+    move = vec2(-eyeDir.x, eyeDir.y) * scale / (eyeDir.z * iter);
+    vec2 nil = vec2(0.0);
 
-      float s;
-      vec2 move;
-      iter = (75 - (dist - 25)) / 3 + 5;
-
-      if (iter > 15) iter = 15;
-
-      vec3 tangEye = -eyeDir;
-
-      iter = mix(iter * 2, iter, tangEye.z);
-
-      s = 1.0 / iter;
-      move = vec2(-eyeDir.x, eyeDir.y) * scale / (eyeDir.z * iter);
-
-      while (h < height) 
-      {
-        height -= s;
-        coord += move;
-        h = texture2D(normTex, coord).a;
-      }
-
+    #define PARALLAX_ITER {\
+      height -= s;\
+      vec2 temp = (h < height) ? move : nil;\
+      coord += temp;\
+      h = texture2D(normTex, coord).a;\
     }
+
+    // 8 iterations of parallax 
+    PARALLAX_ITER
+    PARALLAX_ITER
+    PARALLAX_ITER
+    PARALLAX_ITER
+    PARALLAX_ITER
+    PARALLAX_ITER
+    PARALLAX_ITER
+    PARALLAX_ITER
+
+    // an additional 8 iterations for the HQ parallax
+    #if USE_HQ_PARALLAX
+      PARALLAX_ITER
+      PARALLAX_ITER
+      PARALLAX_ITER
+      PARALLAX_ITER
+      PARALLAX_ITER
+      PARALLAX_ITER
+      PARALLAX_ITER
+      PARALLAX_ITER
+    #endif      
   }
   #endif
 

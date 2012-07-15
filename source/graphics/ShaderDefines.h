@@ -167,25 +167,52 @@ public:
 	void BindUniforms(const CShaderProgramPtr& shader) const;
 };
 
+// Add here the types of queries we can make in the renderer
+enum RENDER_QUERIES
+{
+	RQUERY_TIME
+};
+
 /**
  * Uniform values that need to be evaluated in the renderer.
  * 
  * Not thread-safe - must only be used from the main thread.
  */
-class CShaderRenderQueries : public CShaderUniforms
+class CShaderRenderQueries
 {
 public:
-	CShaderRenderQueries();
+	typedef std::pair<int, CStrIntern> RenderQuery;
 	
-	/**
-	 * Add a name and associated value to the map of uniforms.
-	 * If the name is already defined, its value will be replaced.
-	 */
 	void Add(const char* name);
-	
 	size_t GetSize();
+	RenderQuery GetItem(size_t i);
+private:
+	std::vector<RenderQuery> m_Items;
+};
+
+
+enum DEFINE_CONDITION_TYPES
+{
+	DCOND_DISTANCE
+};
+
+class CShaderConditionalDefines
+{
+public:
+	struct CondDefine
+	{
+		CStrIntern m_DefName;
+		CStrIntern m_DefValue;
+		int m_CondType;
+		std::vector<float> m_CondArgs;
+	};
 	
-	CStrIntern GetItem(size_t i);
+	void Add(const char* defname, const char* defvalue, int type, std::vector<float> &args);
+	size_t GetSize();
+	CondDefine& GetItem(size_t i);
+	
+private:
+	std::vector<CondDefine> m_Defines;
 };
 
 #endif // INCLUDED_SHADERDEFINES

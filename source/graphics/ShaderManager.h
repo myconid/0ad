@@ -132,7 +132,7 @@ private:
 	Status ReloadChangedFile(const VfsPath& path);
 	
 public:
-	CStrIntern QueryTime;
+	//CStrIntern QueryTime;
 };
 
 #endif // INCLUDED_SHADERMANAGER

@@ -234,31 +234,44 @@ void CShaderUniforms::BindUniforms(const CShaderProgramPtr& shader) const
 	}
 }
 
-
-CShaderRenderQueries::CShaderRenderQueries()
-{
-	//QueryTime = CStrIntern("time");
-	//QueryModelPos = CStrIntern("modelposition");
-}
-
-
-//RenderQueryTypes CShaderRenderQueries::QueryTypes;
-
 void CShaderRenderQueries::Add(const char* name)
 {
-	CShaderUniforms::Add(name, CVector4D(0,0,0,0));
+	if (name == std::string("time"))
+	{
+		m_Items.push_back(std::make_pair(RQUERY_TIME, CStrIntern(name)));
+	}
 }
 
 size_t CShaderRenderQueries::GetSize()
 {
-	return m_Items->items.size();
+	return m_Items.size();
 }
 
-CStrIntern CShaderRenderQueries::GetItem(size_t i)
+CShaderRenderQueries::RenderQuery CShaderRenderQueries::GetItem(size_t i)
 {
-	return m_Items->items[i].first;
+	return m_Items[i];
 }
 
+void CShaderConditionalDefines::Add(const char* defname, const char* defvalue, int type, std::vector<float> &args)
+{
+	CondDefine cd;
+	cd.m_DefName = CStrIntern(defname);
+	cd.m_DefValue = CStrIntern(defvalue);
+	cd.m_CondArgs = args;
+	cd.m_CondType = type;
+	
+	m_Defines.push_back(cd);
+}
+
+size_t CShaderConditionalDefines::GetSize()
+{
+	return m_Defines.size();
+}
+
+CShaderConditionalDefines::CondDefine& CShaderConditionalDefines::GetItem(size_t i)
+{
+	return m_Defines[i];
+}
 
 // Explicit instantiations:
 
