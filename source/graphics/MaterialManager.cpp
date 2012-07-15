@@ -149,6 +149,20 @@ CMaterial CMaterialManager::LoadMaterial(const VfsPath& pathname)
 				
 				args.push_back(valmin);
 				args.push_back(valmax);
+				
+				if (valmin >= 0.0f)
+				{
+					std::stringstream sstr;
+					sstr << valmin;
+					material.AddShaderDefine((conf + "_MIN").c_str(), sstr.str().c_str());
+				}
+				
+				if (valmax >= 0.0f)
+				{	
+					std::stringstream sstr;
+					sstr << valmax;
+					material.AddShaderDefine((conf + "_MAX").c_str(), sstr.str().c_str());
+				}
 			}
 			
 			material.AddConditionalDefine(attrs.GetNamedItem(at_name).c_str(), 
