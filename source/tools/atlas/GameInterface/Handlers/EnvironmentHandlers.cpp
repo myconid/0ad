@@ -65,6 +65,14 @@ sEnvironmentSettings GetSettings()
 	s.lightingmodel = CStr(g_LightEnv.GetLightingModel()).FromUTF8();
 
 	s.skyset = g_Renderer.GetSkyManager()->GetSkySet();
+	
+	s.fogfactor = g_LightEnv.m_FogFactor;
+	s.fogmax = g_LightEnv.m_FogMax;
+	
+	s.brightness = g_LightEnv.m_Brightness;
+	s.contrast = g_LightEnv.m_Contrast;
+	s.saturation = g_LightEnv.m_Saturation;
+	s.bloom = g_LightEnv.m_Bloom;
 
 	// RGBColor (CVector3D) colours
 #define COLOUR(A, B) A = Colour((int)(B.X*255), (int)(B.Y*255), (int)(B.Z*255))
@@ -78,6 +86,7 @@ sEnvironmentSettings GetSettings()
 	COLOUR(s.suncolour, g_LightEnv.m_SunColor);
 	COLOUR(s.terraincolour, g_LightEnv.m_TerrainAmbientColor);
 	COLOUR(s.unitcolour, g_LightEnv.m_UnitsAmbientColor);
+	COLOUR(s.fogcolour, g_LightEnv.m_FogColor);
 #undef COLOUR
 
 	return s;
@@ -111,12 +120,21 @@ void SetSettings(const sEnvironmentSettings& s)
 	if (skySet.length() == 0)
 		skySet = L"default";
 	g_Renderer.GetSkyManager()->SetSkySet(skySet);
+	
+	g_LightEnv.m_FogFactor = s.fogfactor;
+	g_LightEnv.m_FogMax = s.fogmax;
+	
+	g_LightEnv.m_Brightness = s.brightness;
+	g_LightEnv.m_Contrast = s.contrast;
+	g_LightEnv.m_Saturation = s.saturation;
+	g_LightEnv.m_Bloom = s.bloom;
 
 #define COLOUR(A, B) B = RGBColor(A->r/255.f, A->g/255.f, A->b/255.f)
 	COLOUR(s.suncolour, g_LightEnv.m_SunColor);
 	g_LightEnv.m_SunColor *= s.sunoverbrightness;
 	COLOUR(s.terraincolour, g_LightEnv.m_TerrainAmbientColor);
 	COLOUR(s.unitcolour, g_LightEnv.m_UnitsAmbientColor);
+	COLOUR(s.fogcolour, g_LightEnv.m_FogColor);
 #undef COLOUR
 }
 

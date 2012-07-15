@@ -439,6 +439,15 @@ struct sEnvironmentSettings
 	Shareable<Colour> suncolour;
 	Shareable<Colour> terraincolour;
 	Shareable<Colour> unitcolour;
+	Shareable<Colour> fogcolour;
+	
+	Shareable<float> fogfactor;
+	Shareable<float> fogmax;
+	
+	Shareable<float> brightness;
+	Shareable<float> contrast;
+	Shareable<float> saturation;
+	Shareable<float> bloom;
 };
 SHAREABLE_STRUCT(sEnvironmentSettings);
 #endif

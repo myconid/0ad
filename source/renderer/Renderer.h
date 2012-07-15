@@ -30,6 +30,7 @@
 #include "ps/Singleton.h"
 #include "scripting/ScriptableObject.h"
 
+#include "renderer/PostprocManager.h"
 #include "renderer/Scene.h"
 #include "renderer/TimeManager.h"
 
@@ -284,6 +285,8 @@ public:
 	CShaderDefines GetSystemShaderDefines();
 	
 	CTimeManager& GetTimeManager();
+	
+	CPostprocManager& GetPostprocManager();
 
 	/**
 	 * GetCapabilities: Return which OpenGL capabilities are available and enabled.

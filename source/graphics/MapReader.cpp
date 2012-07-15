@@ -575,6 +575,15 @@ void CXMLReader::ReadEnvironment(XMBElement parent)
 	EL(tint);
 	EL(reflectiontint);
 	EL(reflectiontintstrength);
+	EL(fog);
+	EL(fogcolour);
+	EL(fogfactor);
+	EL(fogthickness);
+	EL(postproc);
+	EL(brightness);
+	EL(contrast);
+	EL(saturation);
+	EL(bloom);
 	AT(r); AT(g); AT(b);
 #undef AT
 #undef EL
@@ -622,6 +631,52 @@ void CXMLReader::ReadEnvironment(XMBElement parent)
 				attrs.GetNamedItem(at_r).ToFloat(),
 				attrs.GetNamedItem(at_g).ToFloat(),
 				attrs.GetNamedItem(at_b).ToFloat());
+		}
+		else if (element_name == el_fog)
+		{
+			XERO_ITER_EL(element, fog)
+			{
+				int element_name = fog.GetNodeName();
+				if (element_name == el_fogcolour)
+				{
+					XMBAttributeList attrs = fog.GetAttributes();
+					m_MapReader.m_LightEnv.m_FogColor = RGBColor(
+						attrs.GetNamedItem(at_r).ToFloat(),
+						attrs.GetNamedItem(at_g).ToFloat(),
+						attrs.GetNamedItem(at_b).ToFloat());
+				}
+				else if (element_name == el_fogfactor)
+				{
+					m_MapReader.m_LightEnv.m_FogFactor = fog.GetText().ToFloat();
+				}
+				else if (element_name == el_fogthickness)
+				{
+					m_MapReader.m_LightEnv.m_FogMax = fog.GetText().ToFloat();
+				}
+			}
+		}
+		else if (element_name == el_postproc)
+		{
+			XERO_ITER_EL(element, postproc)
+			{
+				int element_name = postproc.GetNodeName();
+				if (element_name == el_brightness)
+				{
+					m_MapReader.m_LightEnv.m_Brightness = postproc.GetText().ToFloat();
+				}
+				else if (element_name == el_contrast)
+				{
+					m_MapReader.m_LightEnv.m_Contrast = postproc.GetText().ToFloat();
+				}
+				else if (element_name == el_saturation)
+				{
+					m_MapReader.m_LightEnv.m_Saturation = postproc.GetText().ToFloat();
+				}
+				else if (element_name == el_bloom)
+				{
+					m_MapReader.m_LightEnv.m_Bloom = postproc.GetText().ToFloat();
+				}
+			}
 		}
 		else if (element_name == el_water)
 		{

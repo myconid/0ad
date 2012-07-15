@@ -276,6 +276,9 @@ public:
 
 	/// Shadow map
 	ShadowMap shadow;
+	
+	/// Postprocessing effect manager
+	CPostprocManager postprocManager;
 
 	/// Various model renderers
 	struct Models
@@ -642,6 +645,8 @@ bool CRenderer::Open(int width, int height)
 	// Let component renderers perform one-time initialization after graphics capabilities and
 	// the shader path have been determined.
 	m->overlayRenderer.Initialize();
+	
+	m->postprocManager.Initialize();
 
 	return true;
 }
@@ -654,6 +659,8 @@ void CRenderer::Resize(int width,int height)
 
 	m_Width = width;
 	m_Height = height;
+	
+	m->postprocManager.RecreateBuffers();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -1370,6 +1377,8 @@ void CRenderer::RenderSubmissions()
 	PROFILE3("render submissions");
 	
 	GetScene().GetLOSTexture().InterpolateLOS();
+	
+	m->postprocManager.CaptureRenderOutput();
 
 	CShaderDefines context = m->globalContext;
 
@@ -1482,6 +1491,8 @@ void CRenderer::RenderSubmissions()
 	// render some other overlays after water (so they can be displayed on top of water)
 	m->overlayRenderer.RenderOverlaysAfterWater();
 	ogl_WarnIfError();
+	
+	m->postprocManager.ApplyPostproc(1);
 
 	// particles are transparent so render after water
 	if (m_Options.m_Particles)
@@ -1513,6 +1524,8 @@ void CRenderer::RenderSubmissions()
 	// render overlays that should appear on top of all other objects
 	m->overlayRenderer.RenderForegroundOverlays(m_ViewCamera);
 	ogl_WarnIfError();
+	
+	m->postprocManager.ReleaseRenderOutput();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -2028,4 +2041,9 @@ CTimeManager& CRenderer::GetTimeManager()
 CMaterialManager& CRenderer::GetMaterialManager()
 {
 	return m->materialManager;
+}
+
+CPostprocManager& CRenderer::GetPostprocManager()
+{
+	return m->postprocManager;
 }

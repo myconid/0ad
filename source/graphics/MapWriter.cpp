@@ -218,6 +218,17 @@ void CMapWriter::WriteXML(const VfsPath& filename,
 				XML_Attribute("g", pLightEnv->m_UnitsAmbientColor.Y);
 				XML_Attribute("b", pLightEnv->m_UnitsAmbientColor.Z);
 			}
+			{
+				XML_Element("Fog");
+				XML_Setting("FogFactor", pLightEnv->m_FogFactor);
+				XML_Setting("FogThickness", pLightEnv->m_FogMax);
+				{
+					XML_Element("FogColour");
+					XML_Attribute("r", pLightEnv->m_FogColor.X);
+					XML_Attribute("g", pLightEnv->m_FogColor.Y);
+					XML_Attribute("b", pLightEnv->m_FogColor.Z);
+				}
+			}
 
 			{
 				XML_Element("Water");
@@ -249,6 +260,16 @@ void CMapWriter::WriteXML(const VfsPath& filename,
 						XML_Attribute("b", pWaterMan->m_ReflectionTint.b);
 					}
 					XML_Setting("ReflectionTintStrength", pWaterMan->m_ReflectionTintStrength);
+				}
+			}
+			
+			{
+				XML_Element("Postproc");
+				{
+					XML_Setting("Brightness", pLightEnv->m_Brightness);
+					XML_Setting("Contrast", pLightEnv->m_Contrast);
+					XML_Setting("Saturation", pLightEnv->m_Saturation);
+					XML_Setting("Bloom", pLightEnv->m_Bloom);
 				}
 			}
 		}
