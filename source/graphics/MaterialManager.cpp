@@ -33,7 +33,7 @@
 CMaterialManager::CMaterialManager()
 {
 	qualityLevel = 5.0;
-	CFG_GET_SYS_VAL("materialmgr.quality", Float, qualityLevel);
+	CFG_GET_USER_VAL("materialmgr.quality", Float, qualityLevel);
 	qualityLevel = clamp(qualityLevel, 0.0f, 10.0f);
 }
 
@@ -57,12 +57,18 @@ CMaterial CMaterialManager::LoadMaterial(const VfsPath& pathname)
 	EL(define);
 	EL(shader);
 	EL(uniform);
+	EL(renderquery);
+	EL(conditional_define);
 	AT(effect);
 	AT(if);
 	AT(quality);
 	AT(material);
 	AT(name);
 	AT(value);
+	AT(type);
+	AT(min);
+	AT(max);
+	AT(conf);
 	#undef AT
 	#undef EL
 
@@ -110,12 +116,69 @@ CMaterial CMaterialManager::LoadMaterial(const VfsPath& pathname)
 		{
 			material.AddShaderDefine(attrs.GetNamedItem(at_name).c_str(), attrs.GetNamedItem(at_value).c_str());
 		}
+		else if (token == el_conditional_define)
+		{
+			std::vector<float> args;
+			
+			CStr type = attrs.GetNamedItem(at_type).c_str();
+			int typeID = -1;
+			
+			if (type == CStr("draw_range"))
+			{
+				typeID = DCOND_DISTANCE;
+				
+				float valmin = -1.0f; 
+				float valmax = -1.0f;
+				
+				CStr conf = attrs.GetNamedItem(at_conf);
+				if (!conf.empty())
+				{
+					CFG_GET_USER_VAL("materialmgr." + conf + ".min", Float, valmin);
+					CFG_GET_USER_VAL("materialmgr." + conf + ".max", Float, valmax);
+				}
+				else
+				{
+					CStr dmin = attrs.GetNamedItem(at_min);
+					if (!dmin.empty())
+						valmin = attrs.GetNamedItem(at_min).ToFloat();
+					
+					CStr dmax = attrs.GetNamedItem(at_max);
+					if (!dmax.empty())
+						valmax = attrs.GetNamedItem(at_max).ToFloat();
+				}
+				
+				args.push_back(valmin);
+				args.push_back(valmax);
+				
+				if (valmin >= 0.0f)
+				{
+					std::stringstream sstr;
+					sstr << valmin;
+					material.AddShaderDefine((conf + "_MIN").c_str(), sstr.str().c_str());
+				}
+				
+				if (valmax >= 0.0f)
+				{	
+					std::stringstream sstr;
+					sstr << valmax;
+					material.AddShaderDefine((conf + "_MAX").c_str(), sstr.str().c_str());
+				}
+			}
+			
+			material.AddConditionalDefine(attrs.GetNamedItem(at_name).c_str(), 
+						      attrs.GetNamedItem(at_value).c_str(), 
+						      typeID, args);
+		}		
 		else if (token == el_uniform)
 		{
 			std::stringstream str(attrs.GetNamedItem(at_value));
 			CVector4D vec;
 			str >> vec.X >> vec.Y >> vec.Z >> vec.W;
 			material.AddStaticUniform(attrs.GetNamedItem(at_name).c_str(), vec);
+		}
+		else if (token == el_renderquery)
+		{
+			material.AddRenderQuery(attrs.GetNamedItem(at_name).c_str());
 		}
 	}
 
