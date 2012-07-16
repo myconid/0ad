@@ -44,9 +44,12 @@ varying vec2 v_los;
   uniform vec3 specularColor;
 #endif
 
+#if USE_SPECULAR || USE_NORMAL_MAP || USE_SPECULAR_MAP || USE_PARALLAX_MAP || USE_AO
+  uniform vec4 effectSettings;
+#endif
+
 #if USE_SPECULAR || USE_NORMAL_MAP || USE_SPECULAR_MAP || USE_PARALLAX_MAP
   varying vec3 v_normal;
-  uniform vec4 effectSettings;
   #if USE_INSTANCING && (USE_NORMAL_MAP || USE_PARALLAX_MAP)
     varying vec4 v_tangent;
     varying vec3 v_bitangent;
@@ -198,7 +201,8 @@ void main()
 
   #if USE_INSTANCING && USE_AO
     vec3 ao = texture2D(aoTex, v_tex2).rrr;
-    ambColor *= ao * 2.0;
+    ao = mix(vec3(1.0), ao * 2.0, effectSettings.w);
+    ambColor *= ao;
   #endif
 
   color += ambColor;
