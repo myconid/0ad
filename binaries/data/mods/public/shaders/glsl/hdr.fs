@@ -19,7 +19,7 @@ vec2 scrsz = vec2(width, height);
 vec3 samp(vec2 offs)
 {
 	//vec3 colour = texture2D(bgl_RenderedTexture, (gl_FragCoord.xy + offs) / scrsz).rgb;
-	vec2 o = offs / 400.0;
+	vec2 o = offs / 300.0;
 	vec3 colour = texture2D(bgl_RenderedTexture, texcoord + o).rgb;
 	//return colour = dot(colour, vec3(0.333)) > 0.8 ? colour : vec3(0.0);
 	return colour;
@@ -35,7 +35,7 @@ void main(void)
 	colour += samp(vec2(-0.5,  0.5));
 	colour += samp(vec2( 0.5,  0.5));
 
-	colour += samp(vec2(-1.5, -1.5));
+	/*colour += samp(vec2(-1.5, -1.5));
 	colour += samp(vec2(-0.5, -1.5));
 	colour += samp(vec2( 0.5, -1.5));
 	colour += samp(vec2( 1.5, -1.5));
@@ -51,11 +51,12 @@ void main(void)
 	colour += samp(vec2( 0.5,  1.5));
 	colour += samp(vec2( 1.5,  1.5));
 
-	colour /= 16.0;
+	colour /= 16.0;*/
+	colour /= 4.0;
 
 	vec3 tex = texture2D(bgl_RenderedTexture, texcoord).rgb;
 
-	colour *= 0.3;
+	colour *= 0.5;
 	colour = 1.0 - (1.0 - colour) * (1.0 - tex);
 
 	colour -= 0.7;
