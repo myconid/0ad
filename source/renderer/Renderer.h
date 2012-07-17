@@ -30,6 +30,7 @@
 #include "ps/Singleton.h"
 #include "scripting/ScriptableObject.h"
 
+#include "renderer/PostprocManager.h"
 #include "renderer/Scene.h"
 #include "renderer/TimeManager.h"
 
