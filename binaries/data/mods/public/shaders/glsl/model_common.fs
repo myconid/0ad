@@ -30,9 +30,7 @@ uniform vec3 ambient;
 uniform vec3 sunColor;
 uniform vec3 sunDir;
 
-#if !USE_NORMAL_MAP
-   varying vec3 v_lighting;
-#endif
+varying vec3 v_lighting;
 
 varying vec2 v_tex;
 varying vec4 v_shadow;
@@ -41,11 +39,13 @@ varying vec2 v_los;
   varying vec2 v_tex2;
 #endif
 
-#if USE_SPECULAR || USE_SPECULAR_MAP
+#if USE_SPECULAR
   uniform float specularPower;
-  #if USE_SPECULAR
-    uniform vec3 specularColor;
-  #endif
+  uniform vec3 specularColor;
+#endif
+
+#if USE_SPECULAR || USE_NORMAL_MAP || USE_SPECULAR_MAP || USE_PARALLAX_MAP || USE_AO
+  uniform vec4 effectSettings;
 #endif
 
 #if USE_SPECULAR || USE_NORMAL_MAP || USE_SPECULAR_MAP || USE_PARALLAX_MAP
@@ -105,7 +105,7 @@ void main()
     float s;
     vec2 move;
     float height = 1.0;
-    float scale = 0.0075;
+    float scale = effectSettings.z;
       
     scale = (scale * (PARALLAX_DIST_MAX - dist)) / PARALLAX_DIST_MAX;
 
@@ -157,7 +157,6 @@ void main()
       discard;
   #endif
 
-
   #if USE_TRANSPARENT
     gl_FragColor.a = tex.a;
   #else
@@ -179,12 +178,13 @@ void main()
     vec3 normal = v_normal;
   #endif
 
-  #if USE_NORMAL_MAP
+  #if USE_INSTANCING && USE_NORMAL_MAP
     float sign = v_tangent.w;
-    mat3 tbn = transpose(mat3(v_tangent.xyz, v_bitangent * -sign, v_normal));
+    mat3 tbn = (mat3(v_tangent.xyz, v_bitangent * -sign, v_normal));
     vec3 ntex = texture2D(normTex, coord).rgb * 2.0 - 1.0;
-    normal = normalize(ntex * tbn);
-    vec3 sundiffuse = max(dot(-sunDir, normal), 0.0) * sunColor;
+    normal = normalize(tbn * ntex);
+    vec3 bumplight = max(dot(-sunDir, normal), 0.0) * sunColor;
+    vec3 sundiffuse = (bumplight - v_lighting) * effectSettings.x + v_lighting;
   #else
     vec3 sundiffuse = v_lighting;
   #endif
@@ -192,14 +192,17 @@ void main()
   vec4 specular = vec4(0.0);
   #if USE_SPECULAR || USE_SPECULAR_MAP
     vec3 specCol;
-    #if USE_SPECULAR
-      specCol = specularColor;
-    #else
+    float specPow;
+    #if USE_INSTANCING && USE_SPECULAR_MAP
       vec4 s = texture2D(specTex, coord);
       specCol = s.rgb;
       specular.a = s.a;
+      specPow = effectSettings.y;
+    #else
+      specCol = specularColor;
+      specPow = specularPower.x;
     #endif
-    specular.rgb = sunColor * specCol * pow(max(0.0, dot(normalize(normal), v_half)), specularPower);
+    specular.rgb = sunColor * specCol * pow(max(0.0, dot(normalize(normal), v_half)), specPow);
   #endif
 
   vec3 color = (texdiffuse * sundiffuse + specular.rgb) * get_shadow();
@@ -207,12 +210,13 @@ void main()
 
   #if USE_INSTANCING && USE_AO
     vec3 ao = texture2D(aoTex, v_tex2).rrr;
-    ambColor *= ao * 2.0;
+    ao = mix(vec3(1.0), ao * 2.0, effectSettings.w);
+    ambColor *= ao;
   #endif
 
   color += ambColor;
 
-  #if USE_SPECULAR_MAP && USE_SELF_LIGHT
+  #if USE_INSTANCING && USE_SPECULAR_MAP && USE_SELF_LIGHT
     color = mix(texdiffuse, color, specular.a);
   #endif
 

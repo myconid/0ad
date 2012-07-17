@@ -40,6 +40,10 @@
 	 COMMENT: The texture is combined using a multiply blend of (2 * ao * baseTex). -->
     <define name="USE_AO" value="1"/>
     
-    <!-- Required by "USE_SPECULAR_MAP" effect -->
-    <uniform name="specularPower" value="50.0"/>
+    <!-- Settings for effects above:
+         First value: Normal mapping intensity.
+	 Second value: Specular power.
+	 Third value: Parallax scale.
+	 Fourth value: AO amount. -->
+    <uniform name="effectSettings" value="1.0 50.0 0.0075 0.75"/>
 </material>

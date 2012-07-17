@@ -77,10 +77,6 @@ IModelDef::IModelDef(const CModelDefPtr& mdef, bool gpuSkinning, bool calculateT
 	m_Normal.elems = 3;
 	m_Array.AddAttribute(&m_Normal);
 	
-	m_Tangent.type = GL_FLOAT;
-	m_Tangent.elems = 4;
-	m_Array.AddAttribute(&m_Tangent);
-	
 	m_UVs = std::vector<VertexArray::Attribute>(mdef->GetNumUVsPerVertex());
 	for (size_t i = 0; i < mdef->GetNumUVsPerVertex(); i++)
 	{
@@ -92,6 +88,10 @@ IModelDef::IModelDef(const CModelDefPtr& mdef, bool gpuSkinning, bool calculateT
 	if (calculateTangents)
 	{
 		// Generate tangents for the geometry:-
+		
+		m_Tangent.type = GL_FLOAT;
+		m_Tangent.elems = 4;
+		m_Array.AddAttribute(&m_Tangent);
 		
 		// floats per vertex; position + normal + tangent + UV*sets
 		int numVertexAttrs = 3 + 3 + 4 + 2 * mdef->GetNumUVsPerVertex();
