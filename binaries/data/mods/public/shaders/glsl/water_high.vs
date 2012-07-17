@@ -1,4 +1,4 @@
-#version 110
+#version 120
 
 uniform mat4 reflectionMatrix;
 uniform mat4 refractionMatrix;

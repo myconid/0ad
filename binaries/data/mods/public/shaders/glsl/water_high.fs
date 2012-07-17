@@ -1,4 +1,4 @@
-#version 110
+#version 120
 
 //uniform vec3 ambient;
 uniform vec3 sunDir;
