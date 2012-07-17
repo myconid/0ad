@@ -170,7 +170,8 @@ public:
 // Add here the types of queries we can make in the renderer
 enum RENDER_QUERIES
 {
-	RQUERY_TIME
+	RQUERY_TIME,
+	RQUERY_WATER_TEX
 };
 
 /**
