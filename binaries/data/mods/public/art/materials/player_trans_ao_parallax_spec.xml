@@ -44,5 +44,5 @@
 	 Second value: Specular power.
 	 Third value: Parallax scale.
 	 Fourth value: AO amount. -->
-    <uniform name="effectSettings" value="1.0 50.0 0.0075 0.5"/>
+    <uniform name="effectSettings" value="1.0 50.0 0.0075 0.75"/>
 </material>

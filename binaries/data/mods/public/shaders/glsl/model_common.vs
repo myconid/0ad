@@ -17,19 +17,22 @@ uniform mat4 instancingTransform;
   uniform vec4 shadowScale;
 #endif
 
-varying vec3 v_lighting;
-varying vec2 v_tex;
-varying vec4 v_shadow;
-varying vec2 v_los;
+varying vec4 v_lighting;
+varying vec4 v_tex_los;
+
+#if USE_SHADOW
+  varying vec4 v_shadow;
+#endif
+
 #if USE_INSTANCING && USE_AO
   varying vec2 v_tex2;
 #endif
 
 #if USE_SPECULAR || USE_NORMAL_MAP || USE_SPECULAR_MAP || USE_PARALLAX_MAP
-  varying vec3 v_normal;
+  varying vec4 v_normal;
   #if USE_INSTANCING && (USE_NORMAL_MAP || USE_PARALLAX_MAP)
     varying vec4 v_tangent;
-    varying vec3 v_bitangent;
+    //varying vec3 v_bitangent;
   #endif
   #if USE_SPECULAR || USE_SPECULAR_MAP
     varying vec3 v_half;
@@ -77,7 +80,7 @@ void main()
     mat3 normalMatrix = mat3(instancingTransform[0].xyz, instancingTransform[1].xyz, instancingTransform[2].xyz);
     vec3 normal = normalMatrix * a_normal;
     #if (USE_NORMAL_MAP || USE_PARALLAX_MAP)
-      vec4 tangent = vec4(normalMatrix * a_tangent.xyz, a_tangent.w);
+      vec3 tangent = normalMatrix * a_tangent.xyz;
     #endif
   #else
     vec4 position = vec4(a_vertex, 1.0);
@@ -88,11 +91,14 @@ void main()
   gl_Position = transform * position;
 
   #if USE_SPECULAR || USE_NORMAL_MAP || USE_SPECULAR_MAP || USE_PARALLAX_MAP
-    v_normal = normal;
+    v_normal.xyz = normal;
 
     #if USE_INSTANCING && (USE_NORMAL_MAP || USE_PARALLAX_MAP)
-	v_tangent = tangent;
-	v_bitangent = cross(v_normal, v_tangent.xyz);
+      v_tangent.xyz = tangent;
+      vec3 bitangent = cross(v_normal.xyz, v_tangent.xyz) * a_tangent.w;
+      v_normal.w = bitangent.x;
+      v_tangent.w = bitangent.y;
+      v_lighting.w = bitangent.z;
     #endif
 
     #if USE_SPECULAR || USE_SPECULAR_MAP || USE_PARALLAX_MAP
@@ -107,9 +113,9 @@ void main()
     #endif
   #endif
 
-  v_lighting = max(0.0, dot(normal, -sunDir)) * sunColor;
+  v_lighting.xyz = max(0.0, dot(normal, -sunDir)) * sunColor;
 
-  v_tex = a_uv0;
+  v_tex_los.xy = a_uv0;
 
   #if USE_INSTANCING && USE_AO
     v_tex2 = a_uv1;
@@ -122,5 +128,5 @@ void main()
     #endif  
   #endif
 
-  v_los = position.xz * losTransform.x + losTransform.y;
+  v_tex_los.zw = position.xz * losTransform.x + losTransform.y;
 }

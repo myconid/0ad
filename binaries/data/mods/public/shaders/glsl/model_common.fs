@@ -7,6 +7,7 @@ uniform sampler2D normTex;
 uniform sampler2D specTex;
 
 #if USE_SHADOW
+  varying vec4 v_shadow;
   #if USE_SHADOW_SAMPLER
     uniform sampler2DShadow shadowTex;
     #if USE_SHADOW_PCF
@@ -30,11 +31,10 @@ uniform vec3 ambient;
 uniform vec3 sunColor;
 uniform vec3 sunDir;
 
-varying vec3 v_lighting;
+varying vec4 v_lighting;
 
-varying vec2 v_tex;
-varying vec4 v_shadow;
-varying vec2 v_los;
+varying vec4 v_tex_los;
+
 #if USE_INSTANCING && USE_AO
   varying vec2 v_tex2;
 #endif
@@ -49,10 +49,10 @@ varying vec2 v_los;
 #endif
 
 #if USE_SPECULAR || USE_NORMAL_MAP || USE_SPECULAR_MAP || USE_PARALLAX_MAP
-  varying vec3 v_normal;
+  varying vec4 v_normal;
   #if USE_INSTANCING && (USE_NORMAL_MAP || USE_PARALLAX_MAP)
     varying vec4 v_tangent;
-    varying vec3 v_bitangent;
+    //varying vec3 v_bitangent;
   #endif
   #if USE_SPECULAR || USE_SPECULAR_MAP
     varying vec3 v_half;
@@ -92,15 +92,17 @@ float get_shadow()
 void main()
 {
 
-  vec2 coord = v_tex;
+  vec2 coord = v_tex_los.xy;
+
+  #if USE_PARALLAX_MAP || USE_NORMAL_MAP
+    vec3 bitangent = vec3(v_normal.w, v_tangent.w, v_lighting.w);
+    mat3 tbn = mat3(v_tangent.xyz, bitangent, v_normal.xyz);
+  #endif
 
   #if USE_PARALLAX_MAP
   {
     float h = texture2D(normTex, coord).a;
-    float sign = v_tangent.w;
-    mat3 tbn = transpose(mat3(v_tangent.xyz, v_bitangent * sign, v_normal));
-
-    vec3 eyeDir = normalize(tbn * v_eyeVec);
+    vec3 eyeDir = normalize(v_eyeVec * tbn);
     float dist = length(v_eyeVec);
 
     if (dist < 100 && h < 0.99)
@@ -166,18 +168,17 @@ void main()
   #endif
 
   #if USE_SPECULAR || USE_SPECULAR_MAP || USE_NORMAL_MAP
-    vec3 normal = v_normal;
+    vec3 normal = v_normal.xyz;
   #endif
 
   #if USE_INSTANCING && USE_NORMAL_MAP
-    float sign = v_tangent.w;
-    mat3 tbn = (mat3(v_tangent.xyz, v_bitangent * -sign, v_normal));
     vec3 ntex = texture2D(normTex, coord).rgb * 2.0 - 1.0;
+    ntex.y = -ntex.y;
     normal = normalize(tbn * ntex);
     vec3 bumplight = max(dot(-sunDir, normal), 0.0) * sunColor;
-    vec3 sundiffuse = (bumplight - v_lighting) * effectSettings.x + v_lighting;
+    vec3 sundiffuse = (bumplight - v_lighting.rgb) * effectSettings.x + v_lighting.rgb;
   #else
-    vec3 sundiffuse = v_lighting;
+    vec3 sundiffuse = v_lighting.rgb;
   #endif
 
   vec4 specular = vec4(0.0);
@@ -212,7 +213,7 @@ void main()
   #endif
 
   #if !IGNORE_LOS
-    float los = texture2D(losTex, v_los).a;
+    float los = texture2D(losTex, v_tex_los.zw).a;
     color *= los;
   #endif
 
