@@ -37,6 +37,7 @@
 #include "renderer/ModelVertexRenderer.h"
 #include "renderer/Renderer.h"
 #include "renderer/RenderModifiers.h"
+#include "renderer/WaterManager.h"
 
 #include <boost/weak_ptr.hpp>
 
@@ -691,12 +692,8 @@ void ShaderModelRenderer::Render(const RenderModifierPtr& modifier, const CShade
 						for (size_t q = 0; q < renderQueries.GetSize(); q++)
 						{
 							CShaderRenderQueries::RenderQuery rq = renderQueries.GetItem(q);
-							//if (str == g_Renderer.GetShaderManager().QueryTime)
 							if (rq.first == RQUERY_TIME)
 							{
-								
-								//renderQueries.Set(str, (float)time, 0.0f, 0.0f, 0.0f);
-								//shader->Uniform(rq.second, CVector3D(time,0,0));
 								CShaderProgram::Binding binding = shader->GetUniformBinding(rq.second);
 								if (binding.Active())
 								{
@@ -704,8 +701,16 @@ void ShaderModelRenderer::Render(const RenderModifierPtr& modifier, const CShade
 									shader->Uniform(binding, time, 0,0,0);
 								}
 							}
+							else if (rq.first == RQUERY_WATER_TEX)
+							{
+								WaterManager* WaterMgr = g_Renderer.GetWaterManager();
+								double time = WaterMgr->m_WaterTexTimer;
+								double period = 1.6;
+								int curTex = (int)(time*60/period) % 60;
+								
+								shader->BindTexture("waterTex", WaterMgr->m_NormalMap[curTex]);
+							}
 						}
-						//renderQueries.BindUniforms(shader);
 
 						modifier->PrepareModel(shader, model);
 
