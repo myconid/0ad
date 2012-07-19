@@ -244,6 +244,10 @@ void CShaderRenderQueries::Add(const char* name)
 	{
 		m_Items.push_back(std::make_pair(RQUERY_WATER_TEX, CStrIntern(name)));
 	}
+	else if (name == CStr("sky_cube"))
+	{
+		m_Items.push_back(std::make_pair(RQUERY_SKY_CUBE, CStrIntern(name)));
+	}
 }
 
 size_t CShaderRenderQueries::GetSize()

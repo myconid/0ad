@@ -22,7 +22,7 @@ uniform mat4 instancingTransform;
   uniform vec4 shadowScale;
 #endif
 
-varying vec3 v_lighting;
+/*varying vec3 v_lighting;
 varying vec2 v_tex;
 varying vec4 v_shadow;
 varying vec2 v_los;
@@ -39,10 +39,10 @@ varying vec2 v_los;
   #if USE_SPECULAR || USE_SPECULAR_MAP
     varying vec3 v_half;
   #endif
-  #if USE_INSTANCING && USE_PARALLAX_MAP
+  //#if USE_INSTANCING && USE_PARALLAX_MAP
     varying vec3 v_eyeVec;
-  #endif
-#endif
+  //#endif
+#endif*/
 
 attribute vec3 a_vertex;
 attribute vec3 a_normal;
@@ -60,6 +60,13 @@ attribute vec2 a_uv1;
   attribute vec4 a_skinWeights;
 #endif
 
+
+varying vec4 worldPos;
+varying vec4 v_tex;
+varying vec4 v_shadow;
+varying vec2 v_los;
+
+
 vec4 fakeCos(vec4 x)
 {
 	vec4 tri = abs(fract(x + 0.5) * 2.0 - 1.0);
@@ -67,7 +74,37 @@ vec4 fakeCos(vec4 x)
 }
 
 
+
 void main()
+{
+	worldPos = instancingTransform * vec4(a_vertex, 1.0);
+	
+	//worldPos = a_vertex.xyz;
+	//waterDepth = dot(a_encodedDepth.xyz, vec3(255.0, -255.0, 1.0));
+	//gl_TexCoord[0].st = a_vertex.xz*repeatScale + translation;
+	v_tex.xy = (a_uv0 + worldPos.xz) / 5.0;
+
+	v_tex.zw = a_uv0;
+
+	//gl_TexCoord[1] = reflectionMatrix * vec4(a_vertex, 1.0);		// projective texturing
+	//gl_TexCoord[2] = refractionMatrix * vec4(a_vertex, 1.0);
+	//gl_TexCoord[3] = losMatrix * vec4(a_vertex, 1.0);
+
+	#if USE_SHADOW
+		v_shadow = shadowTransform * worldPos;
+		#if USE_SHADOW_SAMPLER && USE_SHADOW_PCF
+			v_shadow.xy *= shadowScale.xy;
+		#endif  
+	#endif
+
+	v_los = worldPos.xz * losTransform.x + losTransform.y;
+
+	gl_Position = transform * worldPos;
+}
+
+
+/*
+void main2()
 {
   #if USE_GPU_SKINNING
     vec3 p = vec3(0.0);
@@ -146,15 +183,15 @@ void main()
         vec3 sunVec = -sunDir;
         v_half = normalize(sunVec + normalize(eyeVec));
       #endif
-      #if USE_INSTANCING && USE_PARALLAX_MAP
+      //#if USE_INSTANCING && USE_PARALLAX_MAP
         v_eyeVec = eyeVec;
-      #endif
+      //#endif
     #endif
   #endif
 
   v_lighting = max(0.0, dot(normal, -sunDir)) * sunColor;
 
-  v_tex = a_uv0;
+  v_tex = (a_uv0 + position.xz) / 5.0;
 
   #if USE_INSTANCING && USE_AO
     v_tex2 = a_uv1;
@@ -169,3 +206,4 @@ void main()
 
   v_los = position.xz * losTransform.x + losTransform.y;
 }
+*/
