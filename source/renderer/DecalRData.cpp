@@ -70,7 +70,7 @@ void CDecalRData::Update()
 }
 
 void CDecalRData::RenderDecals(std::vector<CDecalRData*>& decals, const CShaderDefines& context, 
-			       ShadowMap* shadow, bool isDummyShader)
+			       ShadowMap* shadow, bool isDummyShader, const CShaderProgramPtr& dummy)
 {
 	CShaderDefines contextDecal = context;
 	contextDecal.Add("DECAL", "1");
@@ -87,17 +87,26 @@ void CDecalRData::RenderDecals(std::vector<CDecalRData*>& decals, const CShaderD
 			continue;
 		}
 		
-		std::cout << material.GetShaderEffect().string() << std::endl;
+		int numPasses = 1;
+		CShaderTechniquePtr techBase; 
 		
-		CShaderTechniquePtr techBase = g_Renderer.GetShaderManager().LoadEffect(
-			material.GetShaderEffect(), contextDecal, material.GetShaderDefines());
-		
-		for (int pass = 0; pass < techBase->GetNumPasses(); ++pass)
+		if (!isDummyShader)
 		{
-			techBase->BeginPass(pass);
-			TerrainRenderer::PrepareShader(techBase->GetShader(), shadow);
+			techBase = g_Renderer.GetShaderManager().LoadEffect(
+				material.GetShaderEffect(), contextDecal, material.GetShaderDefines());
 			
-			const CShaderProgramPtr& shader = techBase->GetShader(pass);
+			numPasses = techBase->GetNumPasses();
+		}
+		
+		for (int pass = 0; pass < numPasses; ++pass)
+		{
+			if (!isDummyShader)
+			{
+				techBase->BeginPass(pass);
+				TerrainRenderer::PrepareShader(techBase->GetShader(), shadow);
+			}
+			
+			const CShaderProgramPtr& shader = isDummyShader ? dummy : techBase->GetShader(pass);
 				
 			if (material.GetSamplers().size() != 0)
 			{
@@ -157,7 +166,8 @@ void CDecalRData::RenderDecals(std::vector<CDecalRData*>& decals, const CShaderD
 
 				CVertexBuffer::Unbind();
 			}
-			techBase->EndPass();
+			if (!isDummyShader)
+				techBase->EndPass();
 		}
 	}
 }

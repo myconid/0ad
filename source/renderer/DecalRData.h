@@ -35,7 +35,7 @@ public:
 	void Update();
 
 	static void RenderDecals(std::vector<CDecalRData*>& decals, const CShaderDefines& context, 
-			       ShadowMap* shadow, bool isDummyShader);
+			       ShadowMap* shadow, bool isDummyShader=false, const CShaderProgramPtr& dummy=CShaderProgramPtr());
 
 	CModelDecal* GetDecal() { return m_Decal; }
 
