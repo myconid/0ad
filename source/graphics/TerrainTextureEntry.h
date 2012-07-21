@@ -47,8 +47,6 @@ private:
 	// The property sheet used by this texture
 	CTerrainPropertiesPtr m_pProperties;
 	
-	//CTexturePtr m_Texture;
-	
 	CMaterial m_Material;
 
 	CMatrix3D m_TextureMatrix;
