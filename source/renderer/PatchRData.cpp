@@ -39,6 +39,7 @@
 #include "ps/GameSetup/Config.h"
 #include "renderer/AlphaMapCalculator.h"
 #include "renderer/PatchRData.h"
+#include "renderer/TerrainRenderer.h"
 #include "renderer/Renderer.h"
 #include "renderer/WaterManager.h"
 #include "simulation2/Simulation2.h"
@@ -672,36 +673,6 @@ void CPatchRData::Update()
 	}
 }
 
-void CPatchRData::PrepareShader(const CShaderProgramPtr& shader, ShadowMap* shadow)
-{
-	shader->Uniform("transform", g_Renderer.GetViewCamera().GetViewProjection());
-	shader->Uniform("cameraPos", g_Renderer.GetViewCamera().GetOrientation().GetTranslation());
-
-	const CLightEnv& lightEnv = g_Renderer.GetLightEnv();
-
-	if (shadow)
-	{
-		shader->BindTexture("shadowTex", shadow->GetTexture());
-		shader->Uniform("shadowTransform", shadow->GetTextureMatrix());
-		int width = shadow->GetWidth();
-		int height = shadow->GetHeight();
-		shader->Uniform("shadowScale", width, height, 1.0f / width, 1.0f / height);
-	}
-
-	shader->Uniform("ambient", lightEnv.m_UnitsAmbientColor);
-	shader->Uniform("sunDir", lightEnv.GetSunDir());
-	shader->Uniform("sunColor", lightEnv.m_SunColor);
-
-	CLOSTexture& los = g_Renderer.GetScene().GetLOSTexture();
-	shader->BindTexture("losTex", los.GetTexture());
-	shader->Uniform("losTransform", los.GetTextureMatrix()[0], los.GetTextureMatrix()[12], 0.f, 0.f);
-
-	shader->Uniform("ambient", lightEnv.m_TerrainAmbientColor);
-	shader->Uniform("sunColor", lightEnv.m_SunColor);
-
-	shader->BindTexture("blendTex", g_Renderer.m_hCompositeAlphaMap);
-}
-
 // Types used for glMultiDrawElements batching:
 
 // To minimise the cost of memory allocations, everything used for computing
@@ -798,7 +769,7 @@ void CPatchRData::RenderBases(const std::vector<CPatchRData*>& patches, const CS
 		for (int pass = 0; pass < techBase->GetNumPasses(); ++pass)
 		{
 			techBase->BeginPass(pass);
-			PrepareShader(techBase->GetShader(), shadow);
+			TerrainRenderer::PrepareShader(techBase->GetShader(), shadow);
 			
 			const CShaderProgramPtr& shader = techBase->GetShader(pass);
 				
@@ -1018,7 +989,7 @@ void CPatchRData::RenderBlends(const std::vector<CPatchRData*>& patches, const C
 	
 			techBase->BeginPass(pass);
 	
-			PrepareShader(techBase->GetShader(), shadow);
+			TerrainRenderer::PrepareShader(techBase->GetShader(), shadow);
 				
 			const CShaderProgramPtr& shader = techBase->GetShader(pass);
 			

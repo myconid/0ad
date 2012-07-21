@@ -284,8 +284,8 @@ void TerrainRenderer::RenderTerrain(bool filtered)
 	glTexEnvi(GL_TEXTURE_ENV, GL_OPERAND0_ALPHA_ARB, GL_SRC_ALPHA);
 
 	PROFILE_START("render terrain decals");
-	for (size_t i = 0; i < visibleDecals.size(); ++i)
-		visibleDecals[i]->Render(dummyShader, true);
+	//for (size_t i = 0; i < visibleDecals.size(); ++i)
+	//	visibleDecals[i]->Render(dummyShader, true);
 	PROFILE_END("render terrain decals");
 
 
@@ -545,15 +545,16 @@ void TerrainRenderer::RenderTerrainShader(const CShaderDefines& context, ShadowM
 
 	// Render terrain decals
 
-	techDecal->BeginPass();
-	PrepareShader(techDecal->GetShader(), shadow);
+	//techDecal->BeginPass();
+	//PrepareShader(techDecal->GetShader(), shadow);
 
 	PROFILE_START("render terrain decals");
-	for (size_t i = 0; i < visibleDecals.size(); ++i)
-		visibleDecals[i]->Render(techDecal->GetShader(), false);
+	//for (size_t i = 0; i < visibleDecals.size(); ++i)
+	//	visibleDecals[i]->Render(context, false);
+	CDecalRData::RenderDecals(visibleDecals, context, shadow, false);
 	PROFILE_END("render terrain decals");
 
-	techDecal->EndPass();
+	//techDecal->EndPass();
 
 	// restore OpenGL state
 	g_Renderer.BindTexture(1, 0);
