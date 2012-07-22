@@ -482,7 +482,7 @@ void TerrainRenderer::PrepareShader(const CShaderProgramPtr& shader, ShadowMap* 
 	shader->Uniform("ambient", lightEnv.m_TerrainAmbientColor);
 	shader->Uniform("sunColor", lightEnv.m_SunColor);
 
-	shader->BindTexture("blendTex", g_Renderer.m_hCompositeAlphaMap);
+	//shader->BindTexture("blendTex", g_Renderer.m_hCompositeAlphaMap);
 }
 
 void TerrainRenderer::RenderTerrainShader(const CShaderDefines& context, ShadowMap* shadow, bool filtered)
