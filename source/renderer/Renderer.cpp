@@ -1854,14 +1854,14 @@ Status CRenderer::ReloadChangedFileCB(void* param, const VfsPath& path)
 	CRenderer* renderer = static_cast<CRenderer*>(param);
 
 	// If an alpha map changed, and we already loaded them, then reload them
-	if (boost::algorithm::starts_with(path.string(), L"art/textures/terrain/alphamaps/"))
+	/*if (boost::algorithm::starts_with(path.string(), L"art/textures/terrain/alphamaps/"))
 	{
 		if (renderer->m_hCompositeAlphaMap)
 		{
 			renderer->UnloadAlphaMaps();
 			renderer->LoadAlphaMaps();
 		}
-	}
+	}*/
 
 	return INFO::OK;
 }

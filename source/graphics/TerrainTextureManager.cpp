@@ -48,6 +48,11 @@ CTerrainTextureManager::CTerrainTextureManager():
 CTerrainTextureManager::~CTerrainTextureManager()
 {
 	UnloadTerrainTextures();
+	
+	/*for (TerrainAlphaMap::iterator it = m_TerrainAlphas.begin(); it != m_TerrainAlphas.end(); ++it)
+	{
+		it->second.DeallocateTexture();
+	}*/
 }
 
 void CTerrainTextureManager::UnloadTerrainTextures()

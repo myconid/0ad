@@ -275,7 +275,7 @@ void CPatchRData::BuildBlends()
 		for (size_t t = 0; t < blendLayers[k].m_Tiles.size(); ++t)
 		{
 			SBlendLayer::Tile& tile = blendLayers[k].m_Tiles[t];
-			AddBlend(blendVertices, blendIndices, tile.i, tile.j, tile.shape);
+			AddBlend(blendVertices, blendIndices, tile.i, tile.j, tile.shape, splat.m_Texture);
 		}
 
 		splat.m_IndexCount = blendIndices.size() - splat.m_IndexStart;
@@ -310,7 +310,8 @@ void CPatchRData::BuildBlends()
 	}
 }
 
-void CPatchRData::AddBlend(std::vector<SBlendVertex>& blendVertices, std::vector<u16>& blendIndices, u16 i, u16 j, u8 shape)
+void CPatchRData::AddBlend(std::vector<SBlendVertex>& blendVertices, std::vector<u16>& blendIndices, 
+			   u16 i, u16 j, u8 shape, CTerrainTextureEntry* texture)
 {
 	CTerrain* terrain = m_Patch->m_Parent;
 
@@ -330,10 +331,15 @@ void CPatchRData::AddBlend(std::vector<SBlendVertex>& blendVertices, std::vector
 	if (alphamap == -1)
 		return;
 
-	float u0 = g_Renderer.m_AlphaMapCoords[alphamap].u0;
+	/*float u0 = g_Renderer.m_AlphaMapCoords[alphamap].u0;
 	float u1 = g_Renderer.m_AlphaMapCoords[alphamap].u1;
 	float v0 = g_Renderer.m_AlphaMapCoords[alphamap].v0;
-	float v1 = g_Renderer.m_AlphaMapCoords[alphamap].v1;
+	float v1 = g_Renderer.m_AlphaMapCoords[alphamap].v1;*/
+	
+	float u0 = texture->m_TerrainAlpha->m_AlphaMapCoords[alphamap].u0;
+	float u1 = texture->m_TerrainAlpha->m_AlphaMapCoords[alphamap].u1;
+	float v0 = texture->m_TerrainAlpha->m_AlphaMapCoords[alphamap].v0;
+	float v1 = texture->m_TerrainAlpha->m_AlphaMapCoords[alphamap].v1;
 
 	if (alphamapflags & BLENDMAP_FLIPU)
 		std::swap(u0, u1);
@@ -1021,6 +1027,8 @@ void CPatchRData::RenderBlends(const std::vector<CPatchRData*>& patches, const C
 					CMaterial::TextureSampler &samp = samplers[s];
 					shader->BindTexture(samp.Name.c_str(), samp.Sampler);
 				}
+
+				shader->BindTexture("blendTex", itt->m_Texture->m_TerrainAlpha->m_hCompositeAlphaMap);
 
 				itt->m_Texture->GetMaterial().GetStaticUniforms().BindUniforms(shader);
 				

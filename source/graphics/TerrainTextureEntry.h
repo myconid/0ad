@@ -62,6 +62,8 @@ private:
 
 	// calculate the root color of the texture, used for coloring minimap
 	void BuildBaseColor();
+	
+	int LoadAlphaMaps(VfsPath &amtype);
 
 public:
 	// Most of the texture's data is delay-loaded, so after the constructor has
@@ -93,6 +95,8 @@ public:
 		if (!m_BaseColorValid) BuildBaseColor();
 		return m_BaseColor;
 	}
+	
+	TerrainAlpha *m_TerrainAlpha;
 };
 
 #endif 

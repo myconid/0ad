@@ -4,6 +4,6 @@
                 <texture name="baseTex" file="types/snow grass 2.dds"/>
 		<texture name="normTex" file="types/snow grass 2_norm.png"/>
 		<texture name="specTex" file="types/snow grass 2_spec.png"/>
-        <texture name="blendTex" file="alphamaps/blendtex.png"/></textures>
+         </textures>
         <material>terrain_norm.xml</material>
 </terrain>

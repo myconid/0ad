@@ -114,7 +114,8 @@ private:
 	// build this renderdata object
 	void Build();
 
-	void AddBlend(std::vector<SBlendVertex>& blendVertices, std::vector<u16>& blendIndices, u16 i, u16 j, u8 shape);
+	void AddBlend(std::vector<SBlendVertex>& blendVertices, std::vector<u16>& blendIndices, 
+			   u16 i, u16 j, u8 shape, CTerrainTextureEntry* texture);
 
 	void BuildBlends();
 	void BuildIndices();

@@ -2,6 +2,6 @@
 <terrain>
         <textures>
                 <texture name="baseTex" file="types/grass1_spring.png"/>
-        <texture name="blendTex" file="alphamaps/blendtex.png"/></textures>
+         </textures>
         <material>terrain_grass.xml</material>
 </terrain>
