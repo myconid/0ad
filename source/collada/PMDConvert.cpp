@@ -164,7 +164,6 @@ public:
 			for (size_t i = 0; i < texcoordSources.size(); ++i)
 			{
 				dataTexcoords.push_back(texcoordSources[i]->GetData());
-				assert(texcoordSources[i]->GetDataCount() == vertexCount*2);
 			}
 
 			float* dataPosition = sourcePosition->GetData();
@@ -438,7 +437,6 @@ public:
 			for (size_t i = 0; i < texcoordSources.size(); ++i)
 			{
 				dataTexcoords.push_back(texcoordSources[i]->GetData());
-				assert(texcoordSources[i]->GetDataCount() == vertexCount*2);
 			}
 
 			float* dataPosition = sourcePosition->GetData();
