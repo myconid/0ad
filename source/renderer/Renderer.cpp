@@ -1817,6 +1817,25 @@ int CRenderer::LoadAlphaMaps()
 	// upload the composite texture
 	Tex t;
 	(void)tex_wrap(total_w, total_h, 8, TEX_GREY, data, 0, &t);
+	
+	/*VfsPath filename("blendtex.png");
+	
+	DynArray da;
+	RETURN_STATUS_IF_ERR(tex_encode(&t, filename.Extension(), &da));
+
+	// write to disk
+	//Status ret = INFO::OK;
+	{
+		shared_ptr<u8> file = DummySharedPtr(da.base);
+		const ssize_t bytes_written = g_VFS->CreateFile(filename, file, da.pos);
+		if(bytes_written > 0)
+			ENSURE(bytes_written == (ssize_t)da.pos);
+		//else
+		//	ret = (Status)bytes_written;
+	}
+
+	(void)da_free(&da);*/
+	
 	m_hCompositeAlphaMap = ogl_tex_wrap(&t, g_VFS, key);
 	(void)ogl_tex_set_filter(m_hCompositeAlphaMap, GL_LINEAR);
 	(void)ogl_tex_set_wrap  (m_hCompositeAlphaMap, GL_CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE);
@@ -1840,14 +1859,14 @@ Status CRenderer::ReloadChangedFileCB(void* param, const VfsPath& path)
 	CRenderer* renderer = static_cast<CRenderer*>(param);
 
 	// If an alpha map changed, and we already loaded them, then reload them
-	if (boost::algorithm::starts_with(path.string(), L"art/textures/terrain/alphamaps/"))
+	/*if (boost::algorithm::starts_with(path.string(), L"art/textures/terrain/alphamaps/"))
 	{
 		if (renderer->m_hCompositeAlphaMap)
 		{
 			renderer->UnloadAlphaMaps();
 			renderer->LoadAlphaMaps();
 		}
-	}
+	}*/
 
 	return INFO::OK;
 }
