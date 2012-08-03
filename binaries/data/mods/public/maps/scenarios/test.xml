@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Scenario version="5">
+	<Environment>
+		<LightingModel>standard</LightingModel>
+		<SkySet>rain</SkySet>
+		<SunColour r="0.364706" g="0.364706" b="0.364706"/>
+		<SunElevation angle="0.8936"/>
+		<SunRotation angle="-3.12199"/>
+		<TerrainAmbientColour r="0.447059" g="0.447059" b="0.509804"/>
+		<UnitsAmbientColour r="0.67451" g="0.67451" b="0.764706"/>
+		<Water>
+			<WaterBody>
+				<Type>default</Type>
+				<Colour r="0.294118" g="0.34902" b="0.694118"/>
+				<Height>29.377</Height>
+				<Shininess>240.967</Shininess>
+				<Waviness>5.71289</Waviness>
+				<Murkiness>0.595703</Murkiness>
+				<Tint r="0.27451" g="0.294118" b="0.584314"/>
+				<ReflectionTint r="0.27451" g="0.294118" b="0.584314"/>
+				<ReflectionTintStrength>0</ReflectionTintStrength>
+			</WaterBody>
+		</Water>
+	</Environment>
+	<Camera>
+		<Position x="263.148" y="105.568" z="419.979"/>
+		<Rotation angle="1.96911"/>
+		<Declination angle="0.610865"/>
+	</Camera>
+	<ScriptSettings><![CDATA[
+{
+  "Name": "Unnamed map",
+  "Description": "Give an interesting description of your map.",
+  "PlayerData": [
+    {
+      "Civ": "athen"
+    },
+    {
+      "Civ": "cart"
+    },
+    {
+      "Civ": "celt"
+    },
+    {
+      "Civ": "iber"
+    },
+    {
+      "Civ": "mace"
+    },
+    {
+      "Civ": "pers"
+    },
+    {
+      "Civ": "rome"
+    },
+    {
+      "Civ": "spart"
+    }
+  ],
+  "CircularMap": true
+}
+]]></ScriptSettings>
+	<Entities>
+		<Entity uid="11">
+			<Template>actor|structures/romans/temple_mars2.xml</Template>
+			<Position x="346.85114" z="380.13056"/>
+			<Orientation y="-0.5824"/>
+		</Entity>
+		<Entity uid="12">
+			<Template>gaia/flora_tree_pine_w</Template>
+			<Player>0</Player>
+			<Position x="334.43625" z="358.4944"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="13">
+			<Template>gaia/flora_tree_pine_w</Template>
+			<Player>0</Player>
+			<Position x="326.62616" z="372.34006"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="14">
+			<Template>gaia/flora_tree_pine_w</Template>
+			<Player>0</Player>
+			<Position x="310.02872" z="371.67231"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="15">
+			<Template>gaia/flora_tree_pine_w</Template>
+			<Player>0</Player>
+			<Position x="298.69214" z="380.31327"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="16">
+			<Template>gaia/flora_tree_pine_w</Template>
+			<Player>0</Player>
+			<Position x="316.73887" z="382.99235"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="17">
+			<Template>gaia/flora_tree_pine_w</Template>
+			<Player>0</Player>
+			<Position x="373.58274" z="386.07831"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="18">
+			<Template>gaia/flora_tree_pine_w</Template>
+			<Player>0</Player>
+			<Position x="363.4947" z="401.90098"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="19">
+			<Template>gaia/flora_tree_pine_w</Template>
+			<Player>0</Player>
+			<Position x="373.65055" z="400.55369"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="20">
+			<Template>gaia/flora_tree_pine_w</Template>
+			<Player>0</Player>
+			<Position x="348.59693" z="405.61176"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="21">
+			<Template>gaia/flora_tree_poplar</Template>
+			<Player>0</Player>
+			<Position x="353.6413" z="423.48014"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="22">
+			<Template>gaia/flora_tree_poplar_lombardy</Template>
+			<Player>0</Player>
+			<Position x="369.14106" z="423.64039"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="23">
+			<Template>gaia/flora_tree_poplar_lombardy</Template>
+			<Player>0</Player>
+			<Position x="369.32142" z="431.16761"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="24">
+			<Template>gaia/flora_tree_poplar_lombardy</Template>
+			<Player>0</Player>
+			<Position x="396.64982" z="399.35453"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="25">
+			<Template>gaia/flora_tree_euro_beech</Template>
+			<Player>0</Player>
+			<Position x="410.9419" z="380.26197"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="26">
+			<Template>gaia/flora_tree_euro_beech</Template>
+			<Player>0</Player>
+			<Position x="403.52576" z="377.30311"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="27">
+			<Template>gaia/flora_tree_euro_beech</Template>
+			<Player>0</Player>
+			<Position x="417.10776" z="353.22193"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="28">
+			<Template>gaia/flora_tree_euro_beech</Template>
+			<Player>0</Player>
+			<Position x="422.13279" z="376.05088"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="29">
+			<Template>gaia/flora_tree_euro_beech</Template>
+			<Player>0</Player>
+			<Position x="420.63425" z="392.93845"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="30">
+			<Template>gaia/flora_tree_carob</Template>
+			<Player>0</Player>
+			<Position x="412.8552" z="401.0944"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="31">
+			<Template>gaia/flora_tree_carob</Template>
+			<Player>0</Player>
+			<Position x="405.46421" z="415.99192"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="32">
+			<Template>gaia/flora_tree_carob</Template>
+			<Player>0</Player>
+			<Position x="394.56678" z="416.8263"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="33">
+			<Template>gaia/flora_tree_carob</Template>
+			<Player>0</Player>
+			<Position x="420.94074" z="421.86847"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+		<Entity uid="34">
+			<Template>gaia/flora_tree_carob</Template>
+			<Player>0</Player>
+			<Position x="437.95359" z="401.03525"/>
+			<Orientation y="2.35621"/>
+		</Entity>
+	</Entities>
+	<Paths/>
+</Scenario>
