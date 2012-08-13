@@ -8,7 +8,10 @@
         <prop actor="props/structures/iberians/barracks.xml" attachpoint="root"/>
         <prop actor="props/structures/decals/dirt_small.xml" attachpoint="root"/>
       </props>
-      <textures><texture file="structural/iber_struct.dds" name="baseTex"/></textures>
+      <textures>
+              <texture file="structural/iber_struct.dds" name="baseTex"/>
+	      <texture file="structural/ao/iber_barracks.png" name="aoTex"/>
+      </textures>
     </variant>
   </group>
   <group>
@@ -28,4 +31,5 @@
       </props>
     </variant>
   </group>
+  <material>player_trans_ao.xml</material>
 </actor>

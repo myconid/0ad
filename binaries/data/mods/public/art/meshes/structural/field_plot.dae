@@ -1,167 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.0">
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
   <asset>
     <contributor>
-      <author></author>
-      <authoring_tool>FBX COLLADA exporter</authoring_tool>
-      <comments></comments>
+      <author>Blender User</author>
+      <authoring_tool>Blender 2.63.0 r46461</authoring_tool>
     </contributor>
-    <created>2009-04-15T02:44:45Z</created>
-    <modified>2009-04-15T02:44:45Z</modified>
-    <revision></revision>
-    <title></title>
-    <subject></subject>
-    <keywords></keywords>
-    <unit meter="0.025400"/>
+    <created>2012-08-13T23:33:46</created>
+    <modified>2012-08-13T23:33:46</modified>
+    <unit name="inch" meter="0.0254"/>
     <up_axis>Z_UP</up_axis>
   </asset>
-  <library_images>
-    <image id="Map__1-image" name="Map__1">
-      <init_from>file://C:\Documents and Settings\Brad\My Documents\0 A.D\0 A.D. - New Revision\binaries\data\mods\public\art\textures\skins\structural\field_01.dds</init_from>
-    </image>
-  </library_images>
-  <library_materials>
-    <material id="_01___Default" name="_01___Default">
-      <instance_effect url="#_01___Default-fx"/>
-    </material>
-  </library_materials>
   <library_effects>
-    <effect id="_01___Default-fx" name="_01___Default">
+    <effect id="_01___Default_003-effect">
       <profile_COMMON>
-        <technique sid="standard">
+        <technique sid="common">
           <phong>
             <emission>
-              <color sid="emission">0.000000  0.000000 0.000000 1.000000</color>
+              <color sid="emission">0 0 0 1</color>
             </emission>
             <ambient>
-              <color sid="ambient">0.588235  0.588235 0.588235 1.000000</color>
+              <color sid="ambient">0 0 0 1</color>
             </ambient>
             <diffuse>
-              <texture texture="Map__1-image" texcoord="CHANNEL0">
-                <extra>
-                  <technique profile="MAYA">
-                    <wrapU sid="wrapU0">TRUE</wrapU>
-                    <wrapV sid="wrapV0">TRUE</wrapV>
-                    <blend_mode>ADD</blend_mode>
-                  </technique>
-                </extra>
-              </texture>
+              <color sid="diffuse">0.64 0.64 0.64 1</color>
             </diffuse>
             <specular>
-              <color sid="specular">0.000000  0.000000 0.000000 1.000000</color>
+              <color sid="specular">0.5 0.5 0.5 1</color>
             </specular>
             <shininess>
-              <float sid="shininess">2.000000</float>
+              <float sid="shininess">50</float>
             </shininess>
-            <reflective>
-              <color sid="reflective">0.000000  0.000000 0.000000 1.000000</color>
-            </reflective>
-            <reflectivity>
-              <float sid="reflectivity">1.000000</float>
-            </reflectivity>
-            <transparent>
-              <color sid="transparent">1.000000  1.000000 1.000000 1.000000</color>
-            </transparent>
-            <transparency>
-              <float sid="transparency">0.000000</float>
-            </transparency>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
           </phong>
         </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>1</double_sided>
+          </technique>
+        </extra>
       </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
     </effect>
   </library_effects>
+  <library_materials>
+    <material id="_01___Default_003-material" name="_01___Default.003">
+      <instance_effect url="#_01___Default_003-effect"/>
+    </material>
+  </library_materials>
   <library_geometries>
-    <geometry id="Plane01-lib" name="Plane01Mesh">
+    <geometry id="Plane01Mesh-mesh" name="Plane01Mesh">
       <mesh>
-        <source id="Plane01-lib-Position">
-          <float_array id="Plane01-lib-Position-array" count="18">
--15.000000 -15.000000 0.000000
-0.000000 -15.000000 0.000000
-15.000000 -15.000000 0.000000
--15.000000 15.000000 0.000000
-0.000000 15.000000 0.000000
-15.000000 15.000000 0.000000
-</float_array>
+        <source id="Plane01Mesh-mesh-positions">
+          <float_array id="Plane01Mesh-mesh-positions-array" count="18">-15 -15 0 0 -15 0 15 -15 0 -15 15 0 0 15 0 15 15 0</float_array>
           <technique_common>
-            <accessor source="#Plane01-lib-Position-array" count="6" stride="3">
+            <accessor source="#Plane01Mesh-mesh-positions-array" count="6" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="Plane01-lib-Normal0">
-          <float_array id="Plane01-lib-Normal0-array" count="36">
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-0.000000 0.000000 1.000000
-</float_array>
+        <source id="Plane01Mesh-mesh-normals">
+          <float_array id="Plane01Mesh-mesh-normals-array" count="12">0 0 1 0 0 1 0 0 1 0 0 1</float_array>
           <technique_common>
-            <accessor source="#Plane01-lib-Normal0-array" count="12" stride="3">
+            <accessor source="#Plane01Mesh-mesh-normals-array" count="4" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="Plane01-lib-UV0">
-          <float_array id="Plane01-lib-UV0-array" count="12">
-0.000011 0.501280
-0.000484 0.999898
-0.000011 0.501309
-0.999462 0.500336
-0.999934 0.998954
-0.999462 0.500366
-</float_array>
+        <source id="Plane01Mesh-mesh-map-0">
+          <float_array id="Plane01Mesh-mesh-map-0-array" count="24">0.999462 0.500336 1.1e-5 0.50128 0.999934 0.998954 0.999934 0.998954 1.1e-5 0.50128 4.84e-4 0.999898 0.999934 0.998954 4.84e-4 0.999898 0.999462 0.500366 1.1e-5 0.501309 0.999462 0.500366 4.84e-4 0.999898</float_array>
           <technique_common>
-            <accessor source="#Plane01-lib-UV0-array" count="6" stride="2">
+            <accessor source="#Plane01Mesh-mesh-map-0-array" count="12" stride="2">
               <param name="S" type="float"/>
               <param name="T" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <vertices id="Plane01-lib-Vertex">
-          <input semantic="POSITION" source="#Plane01-lib-Position"/>
+        <source id="Plane01Mesh-mesh-map-1">
+          <float_array id="Plane01Mesh-mesh-map-1-array" count="24">1 0.9969414 0.003058552 1 0.9984707 0.4984707 0.9984707 0.4984707 0.003058552 1 0.001529216 0.5015293 0.9984707 0.4984707 0.001529216 0.5015293 0.9969414 0 0 0.003058552 0.9969414 0 0.001529216 0.5015293</float_array>
+          <technique_common>
+            <accessor source="#Plane01Mesh-mesh-map-1-array" count="12" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Plane01Mesh-mesh-vertices">
+          <input semantic="POSITION" source="#Plane01Mesh-mesh-positions"/>
         </vertices>
-        <polygons material="_01___Default" count="4">
-          <input semantic="VERTEX" offset="0" source="#Plane01-lib-Vertex"/>
-          <input semantic="NORMAL" offset="1" source="#Plane01-lib-Normal0"/>
-          <input semantic="TEXCOORD" offset="2" set="0" source="#Plane01-lib-UV0"/>
-          <p>3 0 3 0 1 0 4 2 4</p>
-          <p>1 3 1 4 4 4 0 5 0</p>
-          <p>4 6 4 1 7 1 5 8 5</p>
-          <p>2 9 2 5 10 5 1 11 1</p>
-        </polygons>
+        <polylist material="_01___Default_003" count="4">
+          <input semantic="VERTEX" source="#Plane01Mesh-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Plane01Mesh-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Plane01Mesh-mesh-map-0" offset="2" set="0"/>
+          <input semantic="TEXCOORD" source="#Plane01Mesh-mesh-map-1" offset="2" set="1"/>
+          <vcount>3 3 3 3 </vcount>
+          <p>3 0 0 0 0 1 4 0 2 4 1 3 0 1 4 1 1 5 4 2 6 1 2 7 5 2 8 2 3 9 5 3 10 1 3 11</p>
+        </polylist>
       </mesh>
+      <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
     </geometry>
   </library_geometries>
-  <library_lights>
-    <light id="SceneAmbient-lib" name="SceneAmbientMesh">
-      <technique_common>
-        <ambient>
-          <color>0.113725 0.113725 0.113725</color>
-        </ambient>
-      </technique_common>
-    </light>
-  </library_lights>
   <library_visual_scenes>
-    <visual_scene id="RootNode" name="RootNode">
-      <node id="Plane01" name="Plane01">
-        <translate sid="translate">0.000000 0.000000 0.070000</translate>
-        <instance_geometry url="#Plane01-lib">
+    <visual_scene id="Scene" name="Scene">
+      <node id="Plane01" type="NODE">
+        <translate sid="location">0 0 0.07</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <instance_geometry url="#Plane01Mesh-mesh">
           <bind_material>
             <technique_common>
-              <instance_material symbol="Map__1-Material" target="#Map__1-Material"/>
-              <instance_material symbol="_01___Default" target="#_01___Default"/>
+              <instance_material symbol="_01___Default_003" target="#_01___Default_003-material">
+                <bind_vertex_input semantic="Plane01-lib-UV0" input_semantic="TEXCOORD" input_set="0"/>
+                <bind_vertex_input semantic="lightmap" input_semantic="TEXCOORD" input_set="1"/>
+              </instance_material>
             </technique_common>
           </bind_material>
         </instance_geometry>
@@ -169,7 +127,6 @@
     </visual_scene>
   </library_visual_scenes>
   <scene>
-    <instance_visual_scene url="#RootNode"/>
+    <instance_visual_scene url="#Scene"/>
   </scene>
 </COLLADA>
-

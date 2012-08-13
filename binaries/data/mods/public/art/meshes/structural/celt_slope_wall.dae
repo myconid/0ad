@@ -1,255 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.0">
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
   <asset>
     <contributor>
-      <author></author>
-      <authoring_tool>FBX COLLADA exporter</authoring_tool>
-      <comments></comments>
+      <author>Blender User</author>
+      <authoring_tool>Blender 2.63.0 r46461</authoring_tool>
     </contributor>
-    <created>2010-10-17T18:40:23Z</created>
-    <modified>2010-10-17T18:40:23Z</modified>
-    <revision></revision>
-    <title></title>
-    <subject></subject>
-    <keywords></keywords>
-    <unit meter="0.025400"/>
+    <created>2012-08-13T23:29:26</created>
+    <modified>2012-08-13T23:29:26</modified>
+    <unit name="inch" meter="0.0254"/>
     <up_axis>Z_UP</up_axis>
   </asset>
-  <library_images>
-    <image id="Map__325-image" name="Map__325">
-      <init_from>file://C:\Documents and Settings\Michael\My Documents\0 A.D\0 A.D. - New Revision\binaries\data\mods\public\art\textures\skins\structural\celt_wall.dds</init_from>
-    </image>
-  </library_images>
-  <library_materials>
-    <material id="_9___Default" name="_9___Default">
-      <instance_effect url="#_9___Default-fx"/>
-    </material>
-  </library_materials>
   <library_effects>
-    <effect id="_9___Default-fx" name="_9___Default">
+    <effect id="_9___Default_001-effect">
       <profile_COMMON>
-        <technique sid="standard">
+        <technique sid="common">
           <phong>
             <emission>
-              <color sid="emission">0.000000  0.000000 0.000000 1.000000</color>
+              <color sid="emission">0 0 0 1</color>
             </emission>
             <ambient>
-              <color sid="ambient">0.588235  0.588235 0.588235 1.000000</color>
+              <color sid="ambient">0 0 0 1</color>
             </ambient>
             <diffuse>
-              <texture texture="Map__325-image" texcoord="CHANNEL0">
-                <extra>
-                  <technique profile="MAYA">
-                    <wrapU sid="wrapU0">TRUE</wrapU>
-                    <wrapV sid="wrapV0">TRUE</wrapV>
-                    <blend_mode>ADD</blend_mode>
-                  </technique>
-                </extra>
-              </texture>
+              <color sid="diffuse">0.64 0.64 0.64 1</color>
             </diffuse>
             <specular>
-              <color sid="specular">0.000000  0.000000 0.000000 1.000000</color>
+              <color sid="specular">0.5 0.5 0.5 1</color>
             </specular>
             <shininess>
-              <float sid="shininess">2.000000</float>
+              <float sid="shininess">50</float>
             </shininess>
-            <reflective>
-              <color sid="reflective">0.000000  0.000000 0.000000 1.000000</color>
-            </reflective>
-            <reflectivity>
-              <float sid="reflectivity">1.000000</float>
-            </reflectivity>
-            <transparent>
-              <color sid="transparent">1.000000  1.000000 1.000000 1.000000</color>
-            </transparent>
-            <transparency>
-              <float sid="transparency">0.000000</float>
-            </transparency>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
           </phong>
         </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>1</double_sided>
+          </technique>
+        </extra>
       </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
     </effect>
   </library_effects>
+  <library_materials>
+    <material id="_9___Default_001-material" name="_9___Default.001">
+      <instance_effect url="#_9___Default_001-effect"/>
+    </material>
+  </library_materials>
   <library_geometries>
-    <geometry id="wall04-lib" name="wall04Mesh">
+    <geometry id="wall04Mesh-mesh" name="wall04Mesh">
       <mesh>
-        <source id="wall04-lib-Position">
-          <float_array id="wall04-lib-Position-array" count="42">
--10.000000 -1.501658 0.000000
-10.000000 -1.501659 0.000000
--10.000000 1.501659 0.000000
-10.000000 1.501658 0.000000
--10.000000 -0.165484 9.247301
-10.000000 -0.165484 9.247301
--10.000000 0.337926 9.247052
-10.000000 0.337927 9.247052
--10.000000 -0.049514 9.347719
-10.000000 -0.049513 9.347719
--10.000000 0.223796 9.347719
-10.000000 0.223797 9.347719
--10.001702 0.629130 6.929871
-10.004907 0.629130 6.929871
-</float_array>
+        <source id="wall04Mesh-mesh-positions">
+          <float_array id="wall04Mesh-mesh-positions-array" count="42">-10 -1.501658 0 10 -1.501659 0 -10 1.501659 0 10 1.501658 0 -10 -0.165484 9.247302 10 -0.165484 9.247302 -10 0.337926 9.247053 10 0.337927 9.247053 -10 -0.04951399 9.34772 10 -0.04951298 9.34772 -10 0.223796 9.34772 10 0.223797 9.34772 -10.0017 0.62913 6.929871 10.00491 0.62913 6.929871</float_array>
           <technique_common>
-            <accessor source="#wall04-lib-Position-array" count="14" stride="3">
+            <accessor source="#wall04Mesh-mesh-positions-array" count="14" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="wall04-lib-Normal0">
-          <float_array id="wall04-lib-Normal0-array" count="162">
-0.000000 -0.349299 0.937011
-0.000000 -0.349300 0.937011
--0.000000 0.353586 0.935402
--0.000000 0.353586 0.935402
--0.000000 0.353586 0.935402
-0.000000 -0.349299 0.937011
-0.000000 -0.989721 0.143008
-0.000000 -0.877428 0.479709
-0.000000 -0.877427 0.479710
-0.000000 -0.877427 0.479710
--0.000000 -0.989722 0.143008
-0.000000 -0.989721 0.143008
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
-1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--1.000000 0.000000 0.000000
--0.000000 0.884014 0.467461
--0.000000 0.884091 0.467315
--0.000000 0.992196 0.124691
--0.000000 0.992196 0.124691
--0.000000 0.992196 0.124691
--0.000000 0.884014 0.467461
-0.000000 -0.349299 0.937011
-0.000000 -0.877427 0.479710
-0.000000 -0.877428 0.479709
-0.000000 -0.877428 0.479709
-0.000000 -0.349300 0.937011
-0.000000 -0.349299 0.937011
--0.000000 0.884014 0.467461
--0.000000 0.353586 0.935402
--0.000000 0.353586 0.935402
--0.000000 0.353586 0.935402
--0.000000 0.884091 0.467315
--0.000000 0.884014 0.467461
-</float_array>
+        <source id="wall04Mesh-mesh-normals">
+          <float_array id="wall04Mesh-mesh-normals-array" count="60">-0.6362804 -0.2694479 0.7228309 0.6362804 -0.2694479 0.7228309 0.6354869 0.2729881 0.72219 -0.6354869 0.2729881 0.72219 0.6724753 -0.7324748 0.1058382 0.6362804 -0.6768701 0.3700674 -0.6362804 -0.6768701 0.3700674 -0.6724753 -0.7324748 0.1058382 1 0 0 1 0 0 1 0 0 1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 -0.6354259 0.682577 0.3609424 0.6352428 0.6827601 0.3608814 0 0.9921873 0.1246681 0 0.9921873 0.1246681</float_array>
           <technique_common>
-            <accessor source="#wall04-lib-Normal0-array" count="54" stride="3">
+            <accessor source="#wall04Mesh-mesh-normals-array" count="20" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="wall04-lib-UV0">
-          <float_array id="wall04-lib-UV0-array" count="72">
-0.000614 0.000135
-0.999953 0.000135
-0.054820 0.001295
-0.155885 0.001140
-0.000614 0.714381
-0.999953 0.714381
-0.088464 0.713258
-0.999953 0.757773
-0.000614 0.727485
-0.999953 0.727485
-0.000614 0.741893
-0.000614 0.757773
-0.999953 0.741893
-0.122240 0.713103
-0.000614 0.998543
-0.999953 0.998543
-0.114650 0.720853
-0.053955 0.001140
-0.114650 0.720853
-0.114650 0.720853
-0.095190 0.720853
-0.087601 0.713122
-0.053955 0.001140
-0.114650 0.720853
-0.087601 0.713122
-0.156749 0.001295
-0.123104 0.713277
-0.115514 0.721009
-0.156749 0.001295
-0.115514 0.721009
-0.115514 0.721009
-0.096055 0.721009
-0.115514 0.721009
-0.054820 0.001295
-0.155885 0.001140
-0.088464 0.713258
-</float_array>
+        <source id="wall04Mesh-mesh-map-0">
+          <float_array id="wall04Mesh-mesh-map-0-array" count="108">6.14e-4 0.727485 0.999953 0.727485 0.999953 0.741893 0.999953 0.741893 6.14e-4 0.741893 6.14e-4 0.727485 0.999953 1.35e-4 0.999953 0.714381 6.14e-4 0.714381 6.14e-4 0.714381 6.14e-4 1.35e-4 0.999953 1.35e-4 0.155885 0.001139998 0.12224 0.713103 0.11465 0.720853 0.05395495 0.001139998 0.155885 0.001139998 0.11465 0.720853 0.11465 0.720853 0.09518998 0.720853 0.087601 0.713122 0.05395495 0.001139998 0.11465 0.720853 0.087601 0.713122 0.156749 0.00129497 0.123104 0.713277 0.115514 0.721009 0.05482 0.00129497 0.156749 0.00129497 0.115514 0.721009 0.115514 0.721009 0.09605497 0.721009 0.08846396 0.713258 0.05482 0.00129497 0.115514 0.721009 0.08846396 0.713258 6.14e-4 0.757773 0.999953 0.757773 0.999953 0.998543 0.999953 0.998543 6.14e-4 0.998543 6.14e-4 0.757773 6.14e-4 0.727485 6.14e-4 0.714381 0.999953 0.714381 0.999953 0.714381 0.999953 0.727485 6.14e-4 0.727485 6.14e-4 0.757773 6.14e-4 0.741893 0.999953 0.741893 0.999953 0.741893 0.999953 0.757773 6.14e-4 0.757773</float_array>
           <technique_common>
-            <accessor source="#wall04-lib-UV0-array" count="36" stride="2">
+            <accessor source="#wall04Mesh-mesh-map-0-array" count="54" stride="2">
               <param name="S" type="float"/>
               <param name="T" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <vertices id="wall04-lib-Vertex">
-          <input semantic="POSITION" source="#wall04-lib-Position"/>
+        <source id="wall04Mesh-mesh-map-1">
+          <float_array id="wall04Mesh-mesh-map-1-array" count="108">0.9755638 1.08898 0.9789046 1.92126e-5 0.9937859 6.50632e-5 0.9937859 6.50632e-5 0.9904451 1.089025 0.9755638 1.08898 0.5116998 1.090541 0.002973496 1.08898 0.006314337 1.94203e-5 0.006314337 1.94203e-5 0.5150406 0.001580059 0.5116998 1.090541 0.8090656 5.01681e-4 0.744158 0.503791 0.7379271 0.5092531 0.6455408 0 0.8090656 5.01681e-4 0.7379271 0.5092531 0.7379271 0.5092531 0.7230458 0.5092075 0.7167483 0.5037207 0.6455408 0 0.7379271 0.5092531 0.7167483 0.5037207 0.9725903 0 0.9013829 0.5037206 0.8950853 0.5092075 0.8090656 5.01667e-4 0.9725903 0 0.8950853 0.5092075 0.8950853 0.5092075 0.8802042 0.509253 0.8739732 0.5037911 0.8090656 5.01667e-4 0.8950853 0.5092075 0.8739732 0.5037911 0.5150406 1.088961 0.5183816 0 0.6455408 1.22961e-4 0.6455408 1.22961e-4 0.6421988 1.089443 0.5150406 1.088961 0 0 0.006314337 1.94203e-5 0.002973496 1.08898 0.9725903 0 0.9789046 1.92126e-5 0.9755638 1.08898 0.9966592 1.089045 0.9904451 1.089025 0.9937859 6.50632e-5 0.9937859 6.50632e-5 1 8.40162e-5 0.9966592 1.089045</float_array>
+          <technique_common>
+            <accessor source="#wall04Mesh-mesh-map-1-array" count="54" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="wall04Mesh-mesh-vertices">
+          <input semantic="POSITION" source="#wall04Mesh-mesh-positions"/>
         </vertices>
-        <polygons material="_9___Default" count="18">
-          <input semantic="VERTEX" offset="0" source="#wall04-lib-Vertex"/>
-          <input semantic="NORMAL" offset="1" source="#wall04-lib-Normal0"/>
-          <input semantic="TEXCOORD" offset="2" set="0" source="#wall04-lib-UV0"/>
-          <p>8 0 8 9 1 9 11 2 12</p>
-          <p>11 3 12 10 4 10 8 5 8</p>
-          <p>1 6 1 5 7 5 4 8 4</p>
-          <p>4 9 4 0 10 0 1 11 1</p>
-          <p>3 12 3 7 13 13 11 14 16</p>
-          <p>1 15 17 3 16 34 11 17 18</p>
-          <p>11 18 19 9 19 20 5 20 21</p>
-          <p>1 21 22 11 22 23 5 23 24</p>
-          <p>0 24 25 4 25 26 8 26 27</p>
-          <p>2 27 2 0 28 28 8 29 29</p>
-          <p>8 30 30 10 31 31 6 32 6</p>
-          <p>2 33 33 8 34 32 6 35 35</p>
-          <p>6 36 11 7 37 7 13 38 15</p>
-          <p>13 39 15 12 40 14 6 41 11</p>
-          <p>8 42 8 4 43 4 5 44 5</p>
-          <p>5 45 5 9 46 9 8 47 8</p>
-          <p>6 48 11 10 49 10 11 50 12</p>
-          <p>11 51 12 7 52 7 6 53 11</p>
-        </polygons>
+        <polylist material="_9___Default_001" count="18">
+          <input semantic="VERTEX" source="#wall04Mesh-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#wall04Mesh-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#wall04Mesh-mesh-map-0" offset="2" set="0"/>
+          <input semantic="TEXCOORD" source="#wall04Mesh-mesh-map-1" offset="2" set="1"/>
+          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
+          <p>8 0 0 9 1 1 11 2 2 11 2 3 10 3 4 8 0 5 1 4 6 5 5 7 4 6 8 4 6 9 0 7 10 1 4 11 3 8 12 7 8 13 11 8 14 1 9 15 3 9 16 11 9 17 11 10 18 9 10 19 5 10 20 1 11 21 11 11 22 5 11 23 0 12 24 4 12 25 8 12 26 2 13 27 0 13 28 8 13 29 8 14 30 10 14 31 6 14 32 2 15 33 8 15 34 6 15 35 6 16 36 7 17 37 13 18 38 13 18 39 12 19 40 6 16 41 8 0 42 4 6 43 5 5 44 5 5 45 9 1 46 8 0 47 6 16 48 10 3 49 11 2 50 11 2 51 7 17 52 6 16 53</p>
+        </polylist>
       </mesh>
+      <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
     </geometry>
   </library_geometries>
   <library_visual_scenes>
-    <visual_scene id="RootNode" name="RootNode">
-      <node id="wall04" name="wall04">
-        <translate sid="translate">0.000000 -2.573418 0.000000</translate>
-        <node id="wall04-Pivot" name="wall04-Pivot">
-          <translate>0.000000 0.000000 -0.495397</translate>
-          <rotate>0.000000 0.000000 0.000000 0.000000</rotate>
-          <instance_geometry url="#wall04-lib">
+    <visual_scene id="Scene" name="Scene">
+      <node id="wall04" type="NODE">
+        <translate sid="location">0 -2.573418 0</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 0</rotate>
+        <scale sid="scale">1 1 1</scale>
+        <node id="wall04-Pivot" type="NODE">
+          <matrix sid="parentinverse">1 0 0 0 0 1 0 2.573418 0 0 1 0 0 0 0 1</matrix>
+          <translate sid="location">0 -2.573418 -0.495397</translate>
+          <rotate sid="rotationZ">0 0 1 0</rotate>
+          <rotate sid="rotationY">0 1 0 0</rotate>
+          <rotate sid="rotationX">1 0 0 0</rotate>
+          <scale sid="scale">1 1 1</scale>
+          <instance_geometry url="#wall04Mesh-mesh">
             <bind_material>
               <technique_common>
-                <instance_material symbol="Map__325-Material" target="#Map__325-Material"/>
-                <instance_material symbol="_9___Default" target="#_9___Default"/>
+                <instance_material symbol="_9___Default_001" target="#_9___Default_001-material">
+                  <bind_vertex_input semantic="wall04-lib-UV0" input_semantic="TEXCOORD" input_set="0"/>
+                  <bind_vertex_input semantic="lightmap" input_semantic="TEXCOORD" input_set="1"/>
+                </instance_material>
               </technique_common>
             </bind_material>
           </instance_geometry>
@@ -258,7 +135,6 @@
     </visual_scene>
   </library_visual_scenes>
   <scene>
-    <instance_visual_scene url="#RootNode"/>
+    <instance_visual_scene url="#Scene"/>
   </scene>
 </COLLADA>
-

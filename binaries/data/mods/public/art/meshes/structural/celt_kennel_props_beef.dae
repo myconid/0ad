@@ -1,268 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.0">
+<COLLADA xmlns="http://www.collada.org/2005/11/COLLADASchema" version="1.4.1">
   <asset>
     <contributor>
-      <author></author>
-      <authoring_tool>FBX COLLADA exporter</authoring_tool>
-      <comments></comments>
+      <author>Blender User</author>
+      <authoring_tool>Blender 2.63.0 r46461</authoring_tool>
     </contributor>
-    <created>2010-09-27T08:15:39Z</created>
-    <modified>2010-09-27T08:15:39Z</modified>
-    <revision></revision>
-    <title></title>
-    <subject></subject>
-    <keywords></keywords>
-    <unit meter="0.025400"/>
+    <created>2012-08-13T23:45:49</created>
+    <modified>2012-08-13T23:45:49</modified>
+    <unit name="inch" meter="0.0254"/>
     <up_axis>Z_UP</up_axis>
   </asset>
-  <library_images>
-    <image id="Map__350-image" name="Map__350">
-      <init_from>file://C:\Documents and Settings\Michael\My Documents\0 A.D\0 A.D. - New Revision\binaries\data\mods\public\art\textures\skins\props\beefslab.png</init_from>
-    </image>
-  </library_images>
-  <library_materials>
-    <material id="_24___Default" name="_24___Default">
-      <instance_effect url="#_24___Default-fx"/>
-    </material>
-  </library_materials>
   <library_effects>
-    <effect id="_24___Default-fx" name="_24___Default">
+    <effect id="_24___Default-effect">
       <profile_COMMON>
-        <technique sid="standard">
+        <technique sid="common">
           <phong>
             <emission>
-              <color sid="emission">0.000000  0.000000 0.000000 1.000000</color>
+              <color sid="emission">0 0 0 1</color>
             </emission>
             <ambient>
-              <color sid="ambient">0.588235  0.588235 0.588235 1.000000</color>
+              <color sid="ambient">0 0 0 1</color>
             </ambient>
             <diffuse>
-              <texture texture="Map__350-image" texcoord="CHANNEL0">
-                <extra>
-                  <technique profile="MAYA">
-                    <wrapU sid="wrapU0">TRUE</wrapU>
-                    <wrapV sid="wrapV0">TRUE</wrapV>
-                    <blend_mode>ADD</blend_mode>
-                  </technique>
-                </extra>
-              </texture>
+              <color sid="diffuse">0.64 0.64 0.64 1</color>
             </diffuse>
             <specular>
-              <color sid="specular">0.000000  0.000000 0.000000 1.000000</color>
+              <color sid="specular">0.5 0.5 0.5 1</color>
             </specular>
             <shininess>
-              <float sid="shininess">2.000000</float>
+              <float sid="shininess">50</float>
             </shininess>
-            <reflective>
-              <color sid="reflective">0.000000  0.000000 0.000000 1.000000</color>
-            </reflective>
-            <reflectivity>
-              <float sid="reflectivity">1.000000</float>
-            </reflectivity>
-            <transparent>
-              <color sid="transparent">1.000000  1.000000 1.000000 1.000000</color>
-            </transparent>
-            <transparency>
-              <float sid="transparency">0.000000</float>
-            </transparency>
+            <index_of_refraction>
+              <float sid="index_of_refraction">1</float>
+            </index_of_refraction>
           </phong>
         </technique>
+        <extra>
+          <technique profile="GOOGLEEARTH">
+            <double_sided>1</double_sided>
+          </technique>
+        </extra>
       </profile_COMMON>
+      <extra><technique profile="MAX3D"><double_sided>1</double_sided></technique></extra>
     </effect>
   </library_effects>
+  <library_materials>
+    <material id="_24___Default-material" name="_24___Default">
+      <instance_effect url="#_24___Default-effect"/>
+    </material>
+  </library_materials>
   <library_geometries>
-    <geometry id="Plane05-lib" name="Plane05Mesh">
+    <geometry id="Plane05Mesh-mesh" name="Plane05Mesh">
       <mesh>
-        <source id="Plane05-lib-Position">
-          <float_array id="Plane05-lib-Position-array" count="60">
--0.479364 -0.919353 0.000000
--0.188881 -1.054007 0.000000
-0.188881 -0.976302 0.000000
-0.400325 -0.907467 0.000000
--0.566643 -0.527004 0.000000
--0.188926 -0.527002 0.220399
-0.188837 -0.527002 0.220399
-0.566643 -0.527004 0.000000
--0.482745 0.000000 0.000000
--0.188926 0.000001 0.220399
-0.188837 0.000001 0.220399
-0.603456 0.000000 0.000000
--0.566643 0.527004 0.000000
--0.188926 0.527005 0.220399
-0.188837 0.527005 0.220399
-0.454690 0.527004 0.000000
--0.443650 0.807965 0.000000
--0.127341 0.954547 0.000000
-0.188881 1.054007 0.000000
-0.566643 1.054007 0.000000
-</float_array>
+        <source id="Plane05Mesh-mesh-positions">
+          <float_array id="Plane05Mesh-mesh-positions-array" count="60">-0.479364 -0.919353 0 -0.188881 -1.054007 0 0.188881 -0.976302 0 0.400325 -0.907467 0 -0.566643 -0.527004 0 -0.188926 -0.527002 0.220399 0.188837 -0.527002 0.220399 0.566643 -0.527004 0 -0.482745 0 0 -0.188926 10e-7 0.220399 0.188837 10e-7 0.220399 0.603456 0 0 -0.566643 0.527004 0 -0.188926 0.527005 0.220399 0.188837 0.527005 0.220399 0.45469 0.527004 0 -0.44365 0.807965 0 -0.127341 0.954547 0 0.188881 1.054007 0 0.566643 1.054007 0</float_array>
           <technique_common>
-            <accessor source="#Plane05-lib-Position-array" count="20" stride="3">
+            <accessor source="#Plane05Mesh-mesh-positions-array" count="20" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="Plane05-lib-Normal0">
-          <float_array id="Plane05-lib-Normal0-array" count="216">
--0.523295 -0.035826 0.851398
--0.313398 -0.278067 0.907998
--0.224173 -0.157494 0.961739
--0.052782 -0.402609 0.913849
--0.224173 -0.157494 0.961739
--0.313398 -0.278067 0.907998
--0.224173 -0.157494 0.961739
--0.052782 -0.402609 0.913849
-0.250707 -0.207115 0.945648
-0.177077 -0.359130 0.916335
-0.250707 -0.207115 0.945648
--0.052782 -0.402609 0.913849
-0.250707 -0.207115 0.945648
-0.177077 -0.359130 0.916335
-0.452744 -0.156110 0.877868
-0.000000 0.000000 1.000000
-0.452744 -0.156110 0.877868
-0.177077 -0.359130 0.916335
--0.579535 0.030165 0.814389
--0.523295 -0.035826 0.851398
--0.304058 0.014042 0.952550
--0.224173 -0.157494 0.961739
--0.304058 0.014042 0.952550
--0.523295 -0.035826 0.851398
--0.304058 0.014042 0.952550
--0.224173 -0.157494 0.961739
-0.259704 0.021753 0.965443
-0.250707 -0.207115 0.945648
-0.259704 0.021753 0.965443
--0.224173 -0.157494 0.961739
-0.259704 0.021753 0.965443
-0.250707 -0.207115 0.945648
-0.476901 0.053371 0.877335
-0.452744 -0.156110 0.877868
-0.476901 0.053371 0.877335
-0.250707 -0.207115 0.945648
--0.434228 0.116058 0.893295
--0.579535 0.030165 0.814389
--0.276749 0.209601 0.937805
--0.304058 0.014042 0.952550
--0.276749 0.209601 0.937805
--0.579535 0.030165 0.814389
--0.276749 0.209601 0.937805
--0.304058 0.014042 0.952550
-0.273981 0.124670 0.953620
-0.259704 0.021753 0.965443
-0.273981 0.124670 0.953620
--0.304058 0.014042 0.952550
-0.273981 0.124670 0.953620
-0.259704 0.021753 0.965443
-0.601438 -0.036132 0.798102
-0.476901 0.053371 0.877335
-0.601438 -0.036132 0.798102
-0.259704 0.021753 0.965443
-0.000000 0.000000 1.000000
--0.434228 0.116058 0.893295
--0.213052 0.426193 0.879186
--0.276749 0.209601 0.937805
--0.213052 0.426193 0.879186
--0.434228 0.116058 0.893295
--0.213052 0.426193 0.879186
--0.276749 0.209601 0.937805
--0.036809 0.407915 0.912278
-0.273981 0.124670 0.953620
--0.036809 0.407915 0.912278
--0.276749 0.209601 0.937805
--0.036809 0.407915 0.912278
-0.273981 0.124670 0.953620
-0.238123 0.224476 0.944938
-0.601438 -0.036132 0.798102
-0.238123 0.224476 0.944938
-0.273981 0.124670 0.953620
-</float_array>
+        <source id="Plane05Mesh-mesh-normals">
+          <float_array id="Plane05Mesh-mesh-normals-array" count="60">-0.5232704 -0.03579819 0.8513749 -0.3133946 -0.2780541 0.9079867 -0.2241584 -0.1574755 0.9617298 -0.0527665 -0.4026002 0.9138463 0.250679 -0.2070986 0.9456465 0.1770684 -0.3591113 0.9163182 0.4527421 -0.1561021 0.8778649 0 0 1 -0.579516 0.03015226 0.8143864 -0.3040559 0.0140385 0.9525437 0.259682 0.02172917 0.9654225 0.4768822 0.05334633 0.8773156 -0.4342173 0.1160314 0.8932768 -0.2767418 0.2095706 0.9378033 0.2739647 0.1246681 0.9536119 0.6014283 -0.03610336 0.7980896 0 0 1 -0.2130497 0.426191 0.8791772 -0.03680527 0.4079104 0.9122593 0.2381054 0.2244636 0.9449141</float_array>
           <technique_common>
-            <accessor source="#Plane05-lib-Normal0-array" count="72" stride="3">
+            <accessor source="#Plane05Mesh-mesh-normals-array" count="20" stride="3">
               <param name="X" type="float"/>
               <param name="Y" type="float"/>
               <param name="Z" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <source id="Plane05-lib-UV0">
-          <float_array id="Plane05-lib-UV0-array" count="40">
-0.074780 0.072911
-0.333333 0.000000
-0.655450 0.037390
-0.887830 0.095345
-0.000000 0.250000
-0.333333 0.250000
-0.666667 0.250000
-1.000000 0.250000
-0.085997 0.496261
-0.333333 0.500000
-0.722752 0.494391
-1.000000 0.500000
-0.000000 0.750000
-0.333333 0.750000
-0.618059 0.748131
-0.869134 0.750000
-0.093475 0.874743
-0.363245 0.953262
-0.666667 1.000000
-1.000000 1.000000
-</float_array>
+        <source id="Plane05Mesh-mesh-map-0">
+          <float_array id="Plane05Mesh-mesh-map-0-array" count="144">0 0.25 0.07477998 0.07291096 0.333333 0.25 0.333333 0.25 0.07477998 0.07291096 0.333333 0 0.333333 0.25 0.333333 0 0.666667 0.25 0.65545 0.03738999 0.666667 0.25 0.333333 0 0.666667 0.25 0.65545 0.03738999 1 0.25 0.88783 0.09534496 1 0.25 0.65545 0.03738999 0.08599698 0.496261 0 0.25 0.333333 0.5 0.333333 0.25 0.333333 0.5 0 0.25 0.333333 0.5 0.333333 0.25 0.722752 0.494391 0.666667 0.25 0.722752 0.494391 0.333333 0.25 0.722752 0.494391 0.666667 0.25 1 0.5 1 0.25 1 0.5 0.666667 0.25 0 0.75 0.08599698 0.496261 0.333333 0.75 0.333333 0.5 0.333333 0.75 0.08599698 0.496261 0.333333 0.75 0.333333 0.5 0.618059 0.748131 0.722752 0.494391 0.618059 0.748131 0.333333 0.5 0.618059 0.748131 0.722752 0.494391 0.869134 0.75 1 0.5 0.869134 0.75 0.722752 0.494391 0.09347498 0.874743 0 0.75 0.363245 0.953262 0.333333 0.75 0.363245 0.953262 0 0.75 0.363245 0.953262 0.333333 0.75 0.666667 1 0.618059 0.748131 0.666667 1 0.333333 0.75 0.666667 1 0.618059 0.748131 1 1 0.869134 0.75 1 1 0.618059 0.748131</float_array>
           <technique_common>
-            <accessor source="#Plane05-lib-UV0-array" count="20" stride="2">
+            <accessor source="#Plane05Mesh-mesh-map-0-array" count="72" stride="2">
               <param name="S" type="float"/>
               <param name="T" type="float"/>
             </accessor>
           </technique_common>
         </source>
-        <vertices id="Plane05-lib-Vertex">
-          <input semantic="POSITION" source="#Plane05-lib-Position"/>
+        <source id="Plane05Mesh-mesh-map-1">
+          <float_array id="Plane05Mesh-mesh-map-1-array" count="144">0 0.4659957 0.07447206 0.1201884 0.2760559 0.4589225 0.2760559 0.4589225 0.07447206 0.1201884 0.3226537 0 0.2760559 0.4589225 0.3226537 0 0.5988559 0.4567366 0.6454744 0.06620162 0.5988559 0.4567366 0.3226537 0 0.5988559 0.4567366 0.6454744 0.06620162 0.9683976 0.4594385 0.8261732 0.1255592 0.9683976 0.4594385 0.6454744 0.06620162 0.07183665 0.9293211 0 0.4659957 0.2762014 0.9227323 0.2760559 0.4589225 0.2762014 0.9227323 0 0.4659957 0.2762014 0.9227323 0.2760559 0.4589225 0.5990014 0.9205465 0.5988559 0.4567366 0.5990014 0.9205465 0.2760559 0.4589225 0.5990014 0.9205465 0.5988559 0.4567366 1 0.9230363 0.9683976 0.4594385 1 0.9230363 0.5988559 0.4567366 2.91028e-4 1.393617 0.07183665 0.9293211 0.2763469 1.386543 0.2762014 0.9227323 0.2763469 1.386543 0.07183665 0.9293211 0.2763469 1.386543 0.2762014 0.9227323 0.5991469 1.384357 0.5990014 0.9205465 0.5991469 1.384357 0.2762014 0.9227323 0.5991469 1.384357 0.5990014 0.9205465 0.8730243 1.387708 1 0.9230363 0.8730243 1.387708 0.5990014 0.9205465 0.1054667 1.640177 2.91028e-4 1.393617 0.3757944 1.767352 0.2763469 1.386543 0.3757944 1.767352 2.91028e-4 1.393617 0.3757944 1.767352 0.2763469 1.386543 0.6460349 1.853056 0.5991469 1.384357 0.6460349 1.853056 0.2763469 1.386543 0.6460349 1.853056 0.5991469 1.384357 0.9688341 1.85087 0.8730243 1.387708 0.9688341 1.85087 0.5991469 1.384357</float_array>
+          <technique_common>
+            <accessor source="#Plane05Mesh-mesh-map-1-array" count="72" stride="2">
+              <param name="S" type="float"/>
+              <param name="T" type="float"/>
+            </accessor>
+          </technique_common>
+        </source>
+        <vertices id="Plane05Mesh-mesh-vertices">
+          <input semantic="POSITION" source="#Plane05Mesh-mesh-positions"/>
         </vertices>
-        <polygons material="_24___Default" count="24">
-          <input semantic="VERTEX" offset="0" source="#Plane05-lib-Vertex"/>
-          <input semantic="NORMAL" offset="1" source="#Plane05-lib-Normal0"/>
-          <input semantic="TEXCOORD" offset="2" set="0" source="#Plane05-lib-UV0"/>
-          <p>4 0 4 0 1 0 5 2 5</p>
-          <p>1 3 1 5 4 5 0 5 0</p>
-          <p>5 6 5 1 7 1 6 8 6</p>
-          <p>2 9 2 6 10 6 1 11 1</p>
-          <p>6 12 6 2 13 2 7 14 7</p>
-          <p>3 15 3 7 16 7 2 17 2</p>
-          <p>8 18 8 4 19 4 9 20 9</p>
-          <p>5 21 5 9 22 9 4 23 4</p>
-          <p>9 24 9 5 25 5 10 26 10</p>
-          <p>6 27 6 10 28 10 5 29 5</p>
-          <p>10 30 10 6 31 6 11 32 11</p>
-          <p>7 33 7 11 34 11 6 35 6</p>
-          <p>12 36 12 8 37 8 13 38 13</p>
-          <p>9 39 9 13 40 13 8 41 8</p>
-          <p>13 42 13 9 43 9 14 44 14</p>
-          <p>10 45 10 14 46 14 9 47 9</p>
-          <p>14 48 14 10 49 10 15 50 15</p>
-          <p>11 51 11 15 52 15 10 53 10</p>
-          <p>16 54 16 12 55 12 17 56 17</p>
-          <p>13 57 13 17 58 17 12 59 12</p>
-          <p>17 60 17 13 61 13 18 62 18</p>
-          <p>14 63 14 18 64 18 13 65 13</p>
-          <p>18 66 18 14 67 14 19 68 19</p>
-          <p>15 69 15 19 70 19 14 71 14</p>
-        </polygons>
+        <polylist material="_24___Default" count="24">
+          <input semantic="VERTEX" source="#Plane05Mesh-mesh-vertices" offset="0"/>
+          <input semantic="NORMAL" source="#Plane05Mesh-mesh-normals" offset="1"/>
+          <input semantic="TEXCOORD" source="#Plane05Mesh-mesh-map-0" offset="2" set="0"/>
+          <input semantic="TEXCOORD" source="#Plane05Mesh-mesh-map-1" offset="2" set="1"/>
+          <vcount>3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 3 </vcount>
+          <p>4 0 0 0 1 1 5 2 2 5 2 3 0 1 4 1 3 5 5 2 6 1 3 7 6 4 8 2 5 9 6 4 10 1 3 11 6 4 12 2 5 13 7 6 14 3 7 15 7 6 16 2 5 17 8 8 18 4 0 19 9 9 20 5 2 21 9 9 22 4 0 23 9 9 24 5 2 25 10 10 26 6 4 27 10 10 28 5 2 29 10 10 30 6 4 31 11 11 32 7 6 33 11 11 34 6 4 35 12 12 36 8 8 37 13 13 38 9 9 39 13 13 40 8 8 41 13 13 42 9 9 43 14 14 44 10 10 45 14 14 46 9 9 47 14 14 48 10 10 49 15 15 50 11 11 51 15 15 52 10 10 53 16 16 54 12 12 55 17 17 56 13 13 57 17 17 58 12 12 59 17 17 60 13 13 61 18 18 62 14 14 63 18 18 64 13 13 65 18 18 66 14 14 67 19 19 68 15 15 69 19 19 70 14 14 71</p>
+        </polylist>
       </mesh>
+      <extra><technique profile="MAYA"><double_sided>1</double_sided></technique></extra>
     </geometry>
   </library_geometries>
   <library_visual_scenes>
-    <visual_scene id="RootNode" name="RootNode">
-      <node id="Plane05" name="Plane05">
-        <translate sid="translate">2.046567 -2.410769 1.598542</translate>
-        <rotate sid="rotateX">1 0 0 90.000003</rotate>
+    <visual_scene id="Scene" name="Scene">
+      <node id="Plane05" type="NODE">
+        <translate sid="location">2.046567 -2.410769 1.598542</translate>
+        <rotate sid="rotationZ">0 0 1 0</rotate>
+        <rotate sid="rotationY">0 1 0 0</rotate>
+        <rotate sid="rotationX">1 0 0 90.00001</rotate>
         <scale sid="scale">0.731181 0.731181 0.731181</scale>
-        <instance_geometry url="#Plane05-lib">
+        <instance_geometry url="#Plane05Mesh-mesh">
           <bind_material>
             <technique_common>
-              <instance_material symbol="Map__350-Material" target="#Map__350-Material"/>
-              <instance_material symbol="_24___Default" target="#_24___Default"/>
+              <instance_material symbol="_24___Default" target="#_24___Default-material">
+                <bind_vertex_input semantic="Plane05-lib-UV0" input_semantic="TEXCOORD" input_set="0"/>
+                <bind_vertex_input semantic="lightmap" input_semantic="TEXCOORD" input_set="1"/>
+              </instance_material>
             </technique_common>
           </bind_material>
         </instance_geometry>
@@ -270,7 +127,6 @@
     </visual_scene>
   </library_visual_scenes>
   <scene>
-    <instance_visual_scene url="#RootNode"/>
+    <instance_visual_scene url="#Scene"/>
   </scene>
 </COLLADA>
-
