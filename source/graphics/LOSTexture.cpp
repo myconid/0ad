@@ -145,7 +145,7 @@ void CLOSTexture::InterpolateLOS()
 	shader->BindTexture("losTex1", m_Texture);
 	shader->BindTexture("losTex2", whichTex ? m_TextureSmooth1 : m_TextureSmooth2);
 	
-	shader->Uniform("delta", (float)g_Renderer.GetTimeManager().GetFrameDelta() * 4.0f, 0.0f, 0.0f, 0.0f);
+	shader->Uniform("delta", (float)g_Renderer.GetTimeManager().GetFrameDelta() * 1.0f, 0.0f, 0.0f, 0.0f);
 	
 	glPushAttrib(GL_VIEWPORT_BIT); 
 	glViewport(0, 0, m_TextureSize, m_TextureSize);

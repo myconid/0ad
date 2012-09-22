@@ -21,6 +21,8 @@
 #include "ICmpRangeManager.h"
 
 #include "simulation2/MessageTypes.h"
+#include "simulation2/components/ICmpObstruction.h"
+#include "simulation2/components/ICmpObstructionManager.h"
 #include "simulation2/components/ICmpPosition.h"
 #include "simulation2/components/ICmpTerritoryManager.h"
 #include "simulation2/components/ICmpVision.h"
@@ -1143,7 +1145,119 @@ public:
 			}
 		}
 	}
+	
+	
+	
+	inline void LosAddPointHelper(u8 owner, i32 i, i32 j, u16* counts)
+	{
+		i32 idx = j*m_TerrainVerticesPerSide + i;
 
+		// Increasing from zero to non-zero - move from unexplored/explored to visible+explored
+		if (counts[idx] == 0)
+		{
+			if (!LosIsOffWorld(i, j))
+				m_LosState[idx] |= ((LOS_VISIBLE | LOS_EXPLORED) << (2*(owner-1)));
+		}
+
+		ASSERT(counts[idx] < 65535);
+		counts[idx] = (u16)(counts[idx] + 1); // ignore overflow; the player should never have 64K units
+	}
+
+	
+	inline void LosRemovePointHelper(u8 owner, i32 i, i32 j, u16* counts)
+	{
+		i32 idx = j*m_TerrainVerticesPerSide + i;
+
+		ASSERT(counts[idx] > 0);
+		counts[idx] = (u16)(counts[idx] - 1);
+
+		// Decreasing from non-zero to zero - move from visible+explored to explored
+		if (counts[idx] == 0)
+		{
+			// (If LosIsOffWorld then this is a no-op, so don't bother doing the check)
+			m_LosState[idx] &= ~(LOS_VISIBLE << (2*(owner-1)));
+		}
+	}
+	
+
+	void LosVisibilityHelper(u8 owner, int x1, int y1, int x2, int y2, int radius, bool adding, u16* counts, const Grid<u16>* grid)
+	{
+		if (adding)
+			LosAddPointHelper(owner, x1, y1, counts);
+		else
+			LosRemovePointHelper(owner, x1, y1, counts);
+		
+		
+		int i,dx,dy,sdx,sdy,dxabs,dyabs,x,y,px,py;
+
+		dx = x2 - x1;
+		dy = y2 - y1;
+		dxabs = fabs(dx);
+		dyabs = fabs(dy);
+
+		sdx = dx < 0 ? -1 : 1;
+		sdy = dy < 0 ? -1 : 1;
+
+		x = dyabs >> 1;
+		y = dxabs >> 1;
+		px = x1;
+		py = y1;
+
+		if (dxabs >= dyabs)
+		{
+			for (i = 0; i < dxabs; i++)
+			{
+				y += dyabs;
+				if (y >= dxabs)
+				{
+					y -= dxabs;
+					py += sdy;
+				}
+				px += sdx;
+				
+				if (adding)
+					LosAddPointHelper(owner, px, py, counts);
+				else
+					LosRemovePointHelper(owner, px, py, counts);
+
+				int dst = (px - x1) * (px - x1) + (py - y1) * (py - y1);
+				if (!(grid->get(px, py) & ICmpObstructionManager::TILE_OBSTRUCTED_FOUNDATION) && dst < radius || dst < radius / 10)
+				{
+
+				}
+				else
+					return;
+			}
+		}
+		else
+		{
+			for (i = 0; i < dyabs; i++)
+			{
+				x += dxabs;
+				if (x >= dyabs)
+				{
+					x -= dyabs;
+					px += sdx;
+				}
+				py += sdy;
+				
+				if (adding)
+					LosAddPointHelper(owner, px, py, counts);
+				else
+					LosRemovePointHelper(owner, px, py, counts);
+
+				int dst = (px - x1) * (px - x1) + (py - y1) * (py - y1);
+				if (!(grid->get(px, py) & ICmpObstructionManager::TILE_OBSTRUCTED_FOUNDATION) && dst < radius || dst < radius / 10)
+				{
+					
+				}
+				else
+					return;
+			}
+		}
+	}
+	
+	
 	/**
 	 * Update the LOS state of tiles within a given circular range,
 	 * either adding or removing visibility depending on the template parameter.
@@ -1194,8 +1308,36 @@ public:
 		// Initialise the strip (i0, i1) to a rough guess
 		i32 i0 = xfloor;
 		i32 i1 = xceil;
+		
+		
+		CmpPtr<ICmpPathfinder> cmpPathfinder(GetSimContext(), SYSTEM_ENTITY);
+		if (!cmpPathfinder)
+			return;
+		
+		const Grid<u16>* grid = &cmpPathfinder->GetPassabilityGrid();
+		
+		
+		
+		i32 x0 = (pos.X / (int)TERRAIN_TILE_SIZE).ToInt_RoundToNegInfinity(), y0 = (pos.Y / (int)TERRAIN_TILE_SIZE).ToInt_RoundToNegInfinity();
+		
+		//std::cout << x0 << std::endl;
 
-		for (i32 j = j0clamp; j <= j1clamp; ++j)
+		int radius = (visionRange / (int)TERRAIN_TILE_SIZE).ToInt_RoundToNegInfinity();
+		int radiusSq = (radius-1) * (radius-1) + 1;
+		
+
+		for (int i = -radius; i < radius + 1; i++)
+		{
+			LosVisibilityHelper(owner, x0, y0, x0 + radius, y0 + i, radiusSq, adding, countsData, grid);
+			LosVisibilityHelper(owner, x0, y0, x0 + i, y0 + radius, radiusSq, adding, countsData, grid);
+			LosVisibilityHelper(owner, x0, y0, x0 - radius, y0 + i, radiusSq, adding, countsData, grid);
+			LosVisibilityHelper(owner, x0, y0, x0 + i, y0 - radius, radiusSq, adding, countsData, grid);
+		}
+		
+		
+		
+
+		/*for (i32 j = j0clamp; j <= j1clamp; ++j)
 		{
 			// Adjust i0 and i1 to be the outermost values that don't exceed
 			// the circle's radius (i.e. require dy^2 + dx^2 <= r^2).
@@ -1231,7 +1373,7 @@ public:
 				LosAddStripHelper(owner, i0clamp, i1clamp, j, countsData);
 			else
 				LosRemoveStripHelper(owner, i0clamp, i1clamp, j, countsData);
-		}
+		}*/
 	}
 
 	/**
@@ -1385,19 +1527,19 @@ public:
 		if (visionRange.IsZero() || owner <= 0 || owner > MAX_LOS_PLAYER_ID)
 			return;
 
-		if ((from - to).CompareLength(visionRange) > 0)
+		//if ((from - to).CompareLength(visionRange) > 0)
 		{
 			// If it's a very large move, then simply remove and add to the new position
 
 			LosUpdateHelper<false>((u8)owner, visionRange, from);
 			LosUpdateHelper<true>((u8)owner, visionRange, to);
 		}
-		else
+		/*else
 		{
 			// Otherwise use the version optimised for mostly-overlapping circles
 
 			LosUpdateHelperIncremental((u8)owner, visionRange, from, to);
-		}
+		}*/
 	}
 
 	virtual i32 GetPercentMapExplored(player_id_t player)
