@@ -432,7 +432,7 @@ struct sEnvironmentSettings
 
 	// support different lighting models ("old" for the version compatible with old scenarios,
 	// "standard" for the new normal model that supports much brighter lighting)
-	Shareable<std::wstring> lightingmodel;
+	Shareable<std::wstring> posteffect;
 
 	Shareable<std::wstring> skyset;
 
@@ -466,6 +466,12 @@ QUERY(GetSkySets,
 	  // no inputs
 	  ,
 	  ((std::vector<std::wstring>, skysets))
+	  );
+
+QUERY(GetPostEffects,
+	  // no inputs
+	  ,
+	  ((std::vector<std::wstring>, posteffects))
 	  );
 
 

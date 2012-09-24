@@ -1491,8 +1491,6 @@ void CRenderer::RenderSubmissions()
 	// render some other overlays after water (so they can be displayed on top of water)
 	m->overlayRenderer.RenderOverlaysAfterWater();
 	ogl_WarnIfError();
-	
-	m->postprocManager.ApplyPostproc(1);
 
 	// particles are transparent so render after water
 	if (m_Options.m_Particles)
@@ -1500,6 +1498,10 @@ void CRenderer::RenderSubmissions()
 		RenderParticles();
 		ogl_WarnIfError();
 	}
+	
+	m->postprocManager.ApplyPostproc();
+	
+	m->postprocManager.ReleaseRenderOutput();
 
 	if (m_Options.m_Silhouettes)
 	{
@@ -1525,7 +1527,6 @@ void CRenderer::RenderSubmissions()
 	m->overlayRenderer.RenderForegroundOverlays(m_ViewCamera);
 	ogl_WarnIfError();
 	
-	m->postprocManager.ReleaseRenderOutput();
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

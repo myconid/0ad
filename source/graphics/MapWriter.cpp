@@ -33,6 +33,7 @@
 #include "ps/Loader.h"
 #include "ps/Filesystem.h"
 #include "ps/XML/XMLWriter.h"
+#include "renderer/PostprocManager.h"
 #include "renderer/SkyManager.h"
 #include "renderer/WaterManager.h"
 #include "simulation2/Simulation2.h"
@@ -53,6 +54,7 @@ CMapWriter::CMapWriter()
 void CMapWriter::SaveMap(const VfsPath& pathname, CTerrain* pTerrain,
 						 WaterManager* pWaterMan, SkyManager* pSkyMan,
 						 CLightEnv* pLightEnv, CCamera* pCamera, CCinemaManager* pCinema,
+						 CPostprocManager* pPostproc,
 						 CSimulation2* pSimulation2)
 {
 	CFilePacker packer(FILE_VERSION, "PSMP");
@@ -64,7 +66,7 @@ void CMapWriter::SaveMap(const VfsPath& pathname, CTerrain* pTerrain,
 	packer.Write(pathname);
 
 	VfsPath pathnameXML = pathname.ChangeExtension(L".xml");
-	WriteXML(pathnameXML, pWaterMan, pSkyMan, pLightEnv, pCamera, pCinema, pSimulation2);
+	WriteXML(pathnameXML, pWaterMan, pSkyMan, pLightEnv, pCamera, pCinema, pPostproc, pSimulation2);
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -173,6 +175,7 @@ void CMapWriter::PackTerrain(CFilePacker& packer, CTerrain* pTerrain)
 void CMapWriter::WriteXML(const VfsPath& filename,
 						  WaterManager* pWaterMan, SkyManager* pSkyMan,
 						  CLightEnv* pLightEnv, CCamera* pCamera, CCinemaManager* pCinema,
+						  CPostprocManager* pPostproc,
 						  CSimulation2* pSimulation2)
 {
 	XML_Start();
@@ -190,7 +193,6 @@ void CMapWriter::WriteXML(const VfsPath& filename,
 		{
 			XML_Element("Environment");
 
-			XML_Setting("LightingModel", pLightEnv->GetLightingModel());
 			XML_Setting("SkySet", pSkyMan->GetSkySet());
 			{
 				XML_Element("SunColour");
@@ -270,6 +272,7 @@ void CMapWriter::WriteXML(const VfsPath& filename,
 					XML_Setting("Contrast", pLightEnv->m_Contrast);
 					XML_Setting("Saturation", pLightEnv->m_Saturation);
 					XML_Setting("Bloom", pLightEnv->m_Bloom);
+					XML_Setting("PostEffect", pPostproc->GetPostEffect());
 				}
 			}
 		}

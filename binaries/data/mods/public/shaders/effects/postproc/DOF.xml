@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<effect>
+
+    <technique>
+        <require shaders="glsl"/>
+	<pass shader="glsl/dof"/>
+	<pass shader="glsl/hdr"/>
+    </technique>
+
+</effect>

@@ -62,7 +62,9 @@ sEnvironmentSettings GetSettings()
 	s.sunrotation = sunrotation;
 	s.sunelevation = g_LightEnv.GetElevation();
 
-	s.lightingmodel = CStr(g_LightEnv.GetLightingModel()).FromUTF8();
+	//s.posteffect = CStr(g_LightEnv.GetLightingModel()).FromUTF8();
+	
+	s.posteffect = g_Renderer.GetPostprocManager().GetPostEffect();
 
 	s.skyset = g_Renderer.GetSkyManager()->GetSkySet();
 	
@@ -113,8 +115,11 @@ void SetSettings(const sEnvironmentSettings& s)
 
 	g_LightEnv.SetRotation(s.sunrotation);
 	g_LightEnv.SetElevation(s.sunelevation);
-
-	g_LightEnv.SetLightingModel(CStrW(*s.lightingmodel).ToUTF8());
+	
+	CStrW posteffect = *s.posteffect;
+	if (posteffect.length() == 0)
+		posteffect = L"default";
+	g_Renderer.GetPostprocManager().SetPostEffect(posteffect);
 
 	CStrW skySet = *s.skyset;
 	if (skySet.length() == 0)
@@ -175,6 +180,13 @@ QUERYHANDLER(GetSkySets)
 {
 	std::vector<CStrW> skies = g_Renderer.GetSkyManager()->GetSkySets();
 	msg->skysets = std::vector<std::wstring>(skies.begin(), skies.end());
+}
+
+
+QUERYHANDLER(GetPostEffects)
+{
+	std::vector<CStrW> effects = g_Renderer.GetPostprocManager().GetPostEffects();
+	msg->posteffects = std::vector<std::wstring>(effects.begin(), effects.end());
 }
 
 }

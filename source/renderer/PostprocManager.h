@@ -11,11 +11,12 @@ public:
 	GLuint m_PingFbo, m_PongFbo;
 	GLuint m_ColourTex1, m_ColourTex2;
 	GLuint m_DepthTex;
-	GLuint m_BloomFbo, m_BloomTex1, m_BloomTex2;
+	GLuint m_BloomFbo, m_BlurTex2a, m_BlurTex2b, m_BlurTex4a, m_BlurTex4b, m_BlurTex8a, m_BlurTex8b;
 	
 	bool m_WhichBuffer;
 	
-	std::vector<std::vector<CShaderTechniquePtr> > renderStages;
+	CStrW m_PostProcEffect;
+	CShaderTechniquePtr m_PostProcTech;
 	
 	int m_Width, m_Height;
 	
@@ -30,12 +31,14 @@ public:
 	
 	void RecreateBuffers();
 	
-	void LoadEffect(const char* name, int stage);
+	void LoadEffect(CStrW &name);
 	
 	void ApplyBloom();
+	void ApplyBloomDownscale2x(GLuint inTex, GLuint outTex, int inWidth, int inHeight);
+	void ApplyBloomBlur(GLuint inOutTex, GLuint tempTex, int inWidth, int inHeight);
 	
-	void ApplyEffect(CShaderTechniquePtr &shaderTech1);
-	void ApplyPostproc(int stage);
+	void ApplyEffect(CShaderTechniquePtr &shaderTech1, int pass);
+	void ApplyPostproc();
 	void ApplyLos();
 	
 	void CaptureRenderOutput();
@@ -45,7 +48,14 @@ public:
 	
 	void ReleaseRenderOutput();
 	
+	std::vector<CStrW> GetPostEffects() const;
 	
+	inline const CStrW& GetPostEffect() const 
+	{
+		return m_PostProcEffect;
+	}
+	
+	void SetPostEffect(CStrW name);
 	
 
 };

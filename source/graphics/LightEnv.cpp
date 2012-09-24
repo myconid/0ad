@@ -36,7 +36,7 @@ CLightEnv::CLightEnv()
 	m_FogColor(0xCC/255.f, 0xCC/255.f, 0xE5/255.f),
 	m_FogFactor(0.000),
 	m_FogMax(0.5),
-	m_Brightness(0.0), m_Contrast(1.0), m_Saturation(0.99), m_Bloom(0.099)
+	m_Brightness(0.0), m_Contrast(1.0), m_Saturation(0.99), m_Bloom(0.1499)
 {
 	CalculateSunDirection();
 }
