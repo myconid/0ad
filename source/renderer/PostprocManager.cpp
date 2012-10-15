@@ -329,8 +329,34 @@ void CPostprocManager::ReleaseRenderOutput()
 	
 	pglBindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, 0);
 	pglBlitFramebufferEXT(0, 0, m_Width, m_Height, 0, 0, m_Width, m_Height, 
-			      GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
+			      GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT, GL_NEAREST);
 	pglBindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, 0);
+	
+	CShaderDefines defines;
+	defines.Add("BLOOM_NOP", "1");
+	CShaderTechniquePtr tech = g_Renderer.GetShaderManager().LoadEffect(CStrIntern("bloom"),
+			g_Renderer.GetSystemShaderDefines(), defines);
+	
+	glDepthMask(GL_FALSE);
+	
+	tech->BeginPass();
+	CShaderProgramPtr shader = tech->GetShader();
+	
+	GLuint renderedTex = m_WhichBuffer ? m_ColourTex1 : m_ColourTex2;
+	
+	shader->BindTexture("renderedTex", renderedTex);
+	
+	glBegin(GL_QUADS);
+	    glColor4f(1.f, 1.f, 1.f, 1.f);
+	    glTexCoord2f(1.0, 1.0);	glVertex2f(1,1);
+	    glTexCoord2f(0.0, 1.0);	glVertex2f(-1,1);	    
+	    glTexCoord2f(0.0, 0.0);	glVertex2f(-1,-1);
+	    glTexCoord2f(1.0, 0.0);	glVertex2f(1,-1);
+	glEnd();
+	
+	tech->EndPass();
+	
+	glDepthMask(GL_TRUE);
 	
 	pglBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
 }
